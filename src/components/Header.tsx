@@ -18,7 +18,7 @@ export function Header() {
                         Docs
                     </Link>
                     <a 
-                        href="https://github.com/instructa/tanstack-starter-min"
+                        href="https://github.com/instructa/constructa-starter"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"

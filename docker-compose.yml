@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:alpine
+    container_name: ex0-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ex0
+    ports:
+      - "5432:5432"
+    volumes:
+      - ex0-data:/var/lib/postgresql/data
+volumes:
+  ex0-data:
