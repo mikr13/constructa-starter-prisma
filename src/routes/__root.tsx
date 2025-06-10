@@ -5,6 +5,7 @@ import { Toaster } from "sonner"
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary"
 import { NotFound } from "~/components/NotFound"
 import { ThemeProvider } from "~/components/theme-provider"
+import { AuthProvider } from "~/components/auth/auth-provider"
 import { getTheme } from "~/lib/theme"
 import { seo } from "~/utils/seo"
 import appCss from "../styles/app.css?url"
@@ -101,8 +102,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             </head>
             <body className="">
                 <ThemeProvider initial={initial}>
-                    <div className="flex min-h-svh flex-col">{children}</div>
-                    <Toaster />
+                    <AuthProvider>
+                        <div className="flex min-h-svh flex-col">{children}</div>
+                        <Toaster />
+                    </AuthProvider>
                 </ThemeProvider>
                 <Scripts />
             </body>

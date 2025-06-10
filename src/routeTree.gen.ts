@@ -16,6 +16,8 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as marketingRouteRouteImport } from './routes/(marketing)/route'
 import { Route as marketingIndexRouteImport } from './routes/(marketing)/index'
+import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 
 // Create/Update Routes
 
@@ -36,6 +38,18 @@ const marketingIndexRoute = marketingIndexRouteImport.update({
   getParentRoute: () => marketingRouteRoute,
 } as any)
 
+const authSignUpRoute = authSignUpRouteImport.update({
+  id: '/(auth)/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authSignInRoute = authSignInRouteImport.update({
+  id: '/(auth)/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -52,6 +66,20 @@ declare module '@tanstack/react-router' {
       path: '/docs'
       fullPath: '/docs'
       preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/sign-up': {
+      id: '/(auth)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof authSignUpRouteImport
       parentRoute: typeof rootRoute
     }
     '/(marketing)/': {
@@ -84,6 +112,24 @@ declare module './routes/docs' {
     FileRoutesByPath['/docs']['fullPath']
   >
 }
+declare module './routes/(auth)/sign-in' {
+  const createFileRoute: CreateFileRoute<
+    '/(auth)/sign-in',
+    FileRoutesByPath['/(auth)/sign-in']['parentRoute'],
+    FileRoutesByPath['/(auth)/sign-in']['id'],
+    FileRoutesByPath['/(auth)/sign-in']['path'],
+    FileRoutesByPath['/(auth)/sign-in']['fullPath']
+  >
+}
+declare module './routes/(auth)/sign-up' {
+  const createFileRoute: CreateFileRoute<
+    '/(auth)/sign-up',
+    FileRoutesByPath['/(auth)/sign-up']['parentRoute'],
+    FileRoutesByPath['/(auth)/sign-up']['id'],
+    FileRoutesByPath['/(auth)/sign-up']['path'],
+    FileRoutesByPath['/(auth)/sign-up']['fullPath']
+  >
+}
 declare module './routes/(marketing)/index' {
   const createFileRoute: CreateFileRoute<
     '/(marketing)/',
@@ -111,10 +157,14 @@ const marketingRouteRouteWithChildren = marketingRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof marketingIndexRoute
   '/docs': typeof DocsRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
 }
 
 export interface FileRoutesByTo {
   '/docs': typeof DocsRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
   '/': typeof marketingIndexRoute
 }
 
@@ -122,26 +172,38 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/(marketing)': typeof marketingRouteRouteWithChildren
   '/docs': typeof DocsRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-up': typeof authSignUpRoute
   '/(marketing)/': typeof marketingIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/docs'
+  fullPaths: '/' | '/docs' | '/sign-in' | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/docs' | '/'
-  id: '__root__' | '/(marketing)' | '/docs' | '/(marketing)/'
+  to: '/docs' | '/sign-in' | '/sign-up' | '/'
+  id:
+    | '__root__'
+    | '/(marketing)'
+    | '/docs'
+    | '/(auth)/sign-in'
+    | '/(auth)/sign-up'
+    | '/(marketing)/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   marketingRouteRoute: typeof marketingRouteRouteWithChildren
   DocsRoute: typeof DocsRoute
+  authSignInRoute: typeof authSignInRoute
+  authSignUpRoute: typeof authSignUpRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   marketingRouteRoute: marketingRouteRouteWithChildren,
   DocsRoute: DocsRoute,
+  authSignInRoute: authSignInRoute,
+  authSignUpRoute: authSignUpRoute,
 }
 
 export const routeTree = rootRoute
@@ -155,7 +217,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/(marketing)",
-        "/docs"
+        "/docs",
+        "/(auth)/sign-in",
+        "/(auth)/sign-up"
       ]
     },
     "/(marketing)": {
@@ -166,6 +230,12 @@ export const routeTree = rootRoute
     },
     "/docs": {
       "filePath": "docs.tsx"
+    },
+    "/(auth)/sign-in": {
+      "filePath": "(auth)/sign-in.tsx"
+    },
+    "/(auth)/sign-up": {
+      "filePath": "(auth)/sign-up.tsx"
     },
     "/(marketing)/": {
       "filePath": "(marketing)/index.tsx",

@@ -1,8 +1,17 @@
-//import { SignedIn, SignedOut, UserButton } from "@daveyplate/better-auth-ui"
 import { Link } from "@tanstack/react-router"
 import { ModeToggle } from "./mode-toggle"
+import { Button } from "./ui/button"
+import { useAuth } from "./auth/auth-provider"
+import { signOut } from "~/lib/auth-client"
 
 export function Header() {
+    const { isAuthenticated, user } = useAuth()
+
+    const handleSignOut = async () => {
+        await signOut()
+        window.location.href = "/"
+    }
+
     return (
         <header className="sticky top-0 z-50 border-b bg-background/60 px-4 py-3 backdrop-blur">
             <div className="container mx-auto flex items-center justify-between">
@@ -29,22 +38,27 @@ export function Header() {
                         </svg>
                     </a>
                     <ModeToggle />
-                    {/* <UserButton />
-
-                    <SignedOut>
-                        <Link to="/auth/$pathname" params={{ pathname: "sign-in" }}>
+                    
+                    {!isAuthenticated ? (
+                        <Link to="/sign-in">
                             <Button className="rounded-full bg-primary px-6 font-medium text-primary-foreground text-sm hover:bg-primary/90">
-                                Sign In <span className="ml-1">↗</span>
+                                Sign In
                             </Button>
                         </Link>
-                    </SignedOut>
-                    <SignedIn>
-                        <Link to="/dashboard">
-                            <Button className="rounded-full bg-primary px-6 font-medium text-primary-foreground text-sm hover:bg-primary/90">
-                                Dashboard <span className="ml-1">↗</span>
+                    ) : (
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-muted-foreground">
+                                Welcome, {user?.name || user?.email}
+                            </span>
+                            <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={handleSignOut}
+                            >
+                                Sign Out
                             </Button>
-                        </Link>
-                    </SignedIn> */}
+                        </div>
+                    )}
                 </nav>
             </div>
         </header>
