@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { Link } from "@tanstack/react-router"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
@@ -17,6 +18,7 @@ type SignInFormData = z.infer<typeof signInSchema>
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
+  const [showVerificationLink, setShowVerificationLink] = useState(false)
   const {
     register,
     handleSubmit,
@@ -35,7 +37,15 @@ export function SignInForm() {
       })
 
       if (result.error) {
-        setError("root", { message: result.error.message })
+        if (result.error.message?.includes("email not verified")) {
+          setError("root", { 
+            message: "Please verify your email before signing in. Check your inbox for a verification link." 
+          })
+          setShowVerificationLink(true)
+        } else {
+          setError("root", { message: result.error.message })
+          setShowVerificationLink(false)
+        }
       } else {
         window.location.href = "/"
       }
@@ -83,7 +93,17 @@ export function SignInForm() {
           </div>
 
           {errors.root && (
-            <p className="text-sm text-destructive">{errors.root.message}</p>
+            <div className="space-y-2">
+              <p className="text-sm text-destructive">{errors.root.message}</p>
+              {showVerificationLink && (
+                <Link 
+                  to="/auth/resend-verification" 
+                  className="text-sm text-primary hover:underline block"
+                >
+                  Resend verification email
+                </Link>
+              )}
+            </div>
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>

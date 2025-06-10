@@ -10,6 +10,18 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendEmail: async ({ user, url, token }) => {
+      console.log(`Email verification for ${user.email}:`);
+      console.log(`Verification URL: ${url}`);
+      console.log(`Token: ${token}`);
+      // In production, replace this with actual email sending
+      // You can use services like Resend, SendGrid, etc.
+    },
   },
   socialProviders: {
     ...(process.env.GITHUB_CLIENT_ID && {

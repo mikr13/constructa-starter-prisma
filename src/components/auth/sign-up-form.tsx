@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { useNavigate } from "@tanstack/react-router"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
@@ -22,6 +23,7 @@ type SignUpFormData = z.infer<typeof signUpSchema>
 
 export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -43,7 +45,11 @@ export function SignUpForm() {
       if (result.error) {
         setError("root", { message: result.error.message })
       } else {
-        window.location.href = "/"
+        // Redirect to verification page
+        navigate({ 
+          to: "/auth/verify-email", 
+          search: { email: data.email } 
+        })
       }
     } catch (error) {
       setError("root", { message: "Something went wrong" })
