@@ -80,7 +80,15 @@ export function SignInForm() {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
+              <Link 
+                to="/forgot-password" 
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"
@@ -98,7 +106,7 @@ export function SignInForm() {
               <p className="text-sm text-destructive">{errors.root.message}</p>
               {showVerificationLink && (
                 <Link 
-                  to="/auth/resend-verification" 
+                  to="/resend-verification" 
                   className="text-sm text-primary hover:underline block"
                 >
                   Resend verification email

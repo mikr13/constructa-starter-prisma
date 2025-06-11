@@ -26,7 +26,7 @@ export function VerifyEmail({ email, token }: VerifyEmailProps) {
     setIsVerifying(true)
     try {
       const result = await verifyEmail({
-        token: verificationToken,
+        query: { token: verificationToken },
       })
 
       if (result.error) {
@@ -36,10 +36,11 @@ export function VerifyEmail({ email, token }: VerifyEmailProps) {
         setMessage("Email verified successfully! You can now sign in.")
         setIsSuccess(true)
         setTimeout(() => {
-          router.navigate({ to: "/auth/sign-in" })
+          router.navigate({ to: "/sign-in" })
         }, 2000)
       }
     } catch (error) {
+      console.error(error)
       setMessage("Verification failed. Please try again.")
       setIsSuccess(false)
     } finally {
@@ -64,6 +65,7 @@ export function VerifyEmail({ email, token }: VerifyEmailProps) {
         setIsSuccess(true)
       }
     } catch (error) {
+      console.error(error)
       setMessage("Failed to resend verification email. Please try again.")
       setIsSuccess(false)
     } finally {

@@ -7,7 +7,8 @@ import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
-import { signUp } from "~/lib/auth-client"
+import { signUp, signIn } from "~/lib/auth-client"
+import { authConfig } from "~/lib/auth-config"
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -45,11 +46,23 @@ export function SignUpForm() {
       if (result.error) {
         setError("root", { message: result.error.message })
       } else {
-        // Redirect to verification page
-        navigate({ 
-          to: "/auth/verify-email", 
-          search: { email: data.email } 
-        })
+        if (authConfig.emailVerificationEnabled) {
+          // Email verification is enabled - redirect to verification page
+          navigate({ to: "/verify-email", search: { email: data.email, token: undefined } })
+        } else {
+          // Email verification is disabled - automatically sign in the user
+          const signInResult = await signIn.email({
+            email: data.email,
+            password: data.password,
+          })
+          
+          if (signInResult.error) {
+            setError("root", { message: "Account created but could not sign in automatically" })
+          } else {
+            // Redirect to dashboard after successful sign in
+            navigate({ to: "/dashboard" })
+          }
+        }
       }
     } catch (error) {
       console.error(error)

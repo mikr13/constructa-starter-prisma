@@ -13,6 +13,13 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: enableEmailVerification,
+    sendResetPassword: async ({ user, url, token }: { user: any, url: any, token: any }) => {
+      console.log(`Password reset for ${user.email}:`);
+      console.log(`Reset URL: ${url}`);
+      console.log(`Token: ${token}`);
+      // In production, replace this with actual email sending
+      // You can use services like Resend, SendGrid, etc.
+    },
   },
   ...(enableEmailVerification && {
     emailVerification: {

@@ -92,7 +92,9 @@ BETTER_AUTH_URL="http://localhost:3000"
 
 # Email Verification (disabled by default)
 # Set to 'true' to enable email verification
+# Both variables must be set to the same value
 ENABLE_EMAIL_VERIFICATION="false"
+VITE_ENABLE_EMAIL_VERIFICATION="false"
 
 # Email Service Configuration (required if email verification is enabled)
 # Configure your email service here (Resend, SendGrid, etc.)
@@ -113,7 +115,7 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
 Email verification is **disabled by default** for easier development. To enable it:
 
-1. Set `ENABLE_EMAIL_VERIFICATION="true"` in your `.env` file
+1. Set both `ENABLE_EMAIL_VERIFICATION="true"` and `VITE_ENABLE_EMAIL_VERIFICATION="true"` in your `.env` file
 2. Configure an email service provider (e.g., Resend, SendGrid, Postmark)
 3. Update the `sendEmail` function in `server/auth.ts` with your email service integration
 
@@ -135,7 +137,16 @@ sendEmail: async ({ user, url }) => {
 }
 ```
 
-**Note:** When email verification is disabled, users can sign in immediately after registration without verifying their email.
+**Behavior when email verification is disabled:**
+- Users are automatically signed in after registration
+- No verification email is sent
+- Users are redirected directly to the dashboard
+
+**Behavior when email verification is enabled:**
+- Users must verify their email before signing in
+- A verification email is sent upon registration
+- Users are redirected to a "check your email" page
+- Users cannot sign in until their email is verified
 
 ### Adding shadcn/ui Components
 ```bash
