@@ -1,15 +1,15 @@
+import {  useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useNavigate } from '@tanstack/react-router'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { resetPassword } from '~/lib/auth-client'
 
-export const Route = createFileRoute('/(auth)/reset-password')({
+export const Route = createFileRoute({
   validateSearch: (search) => ({
     token: (search as any).token as string | undefined,
   }),
