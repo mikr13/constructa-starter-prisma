@@ -114,10 +114,17 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 Email verification is **disabled by default** for easier development. To enable it:
 
 1. Set both `ENABLE_EMAIL_VERIFICATION="true"` and `VITE_ENABLE_EMAIL_VERIFICATION="true"` in your `.env` file
-2. Configure an email service provider (e.g., Resend, SendGrid, Postmark)
-3. Update the `sendEmail` function in `server/auth.ts` with your email service integration
+2. Install your chosen email service provider package
+3. Configure the email service in your environment variables
+4. Update the `sendEmail` function in `server/auth.ts` with your email service integration
 
 **Example with Resend:**
+
+```bash
+# Install Resend
+pnpm add resend
+```
+
 ```typescript
 // server/auth.ts
 import { Resend } from 'resend';
@@ -133,6 +140,19 @@ sendEmail: async ({ user, url }) => {
     html: `<a href="${url}">Click here to verify your email</a>`
   });
 }
+```
+
+**Other email service examples:**
+
+```bash
+# SendGrid
+pnpm add @sendgrid/mail
+
+# Postmark
+pnpm add postmark
+
+# Nodemailer
+pnpm add nodemailer
 ```
 
 **Behavior when email verification is disabled:**
