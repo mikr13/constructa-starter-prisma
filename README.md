@@ -91,80 +91,191 @@ BETTER_AUTH_SECRET="your-secret-key-here"
 BETTER_AUTH_URL="http://localhost:3000"
 
 # Email Verification (disabled by default)
-# Set to 'true' to enable email verification
+# Server-side email verification control
 ENABLE_EMAIL_VERIFICATION="false"
+# Client-side email verification control (for UI decisions)
+VITE_ENABLE_EMAIL_VERIFICATION="false"
 
-# Email Service Configuration (required if email verification is enabled)
-# Configure your email service here (Resend, SendGrid, etc.)
-# EMAIL_FROM="noreply@yourdomain.com"
-# RESEND_API_KEY="your-resend-api-key"
+# Email Service Configuration (Resend is the default provider)
+EMAIL_FROM="noreply@yourdomain.com"
+RESEND_API_KEY="your-resend-api-key"
 
 # OAuth Providers (optional)
+# Server-side OAuth configuration
 GITHUB_CLIENT_ID="your-github-client-id"
 GITHUB_CLIENT_SECRET="your-github-client-secret"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# Client-side OAuth configuration (for UI buttons)
+VITE_GITHUB_CLIENT_ID="your-github-client-id"
+VITE_GOOGLE_CLIENT_ID="your-google-client-id"
 ```
 
 - `VITE_BASE_URL` is optional - in production, it will automatically use the current domain
 - For local development, it defaults to `http://localhost:3000`
 
-### Email Verification
+### Email Service Setup
 
-Email verification is **disabled by default** for easier development. To enable it:
+The application uses **Resend as the default email provider** for sending verification and password reset emails.
 
-1. Set both `ENABLE_EMAIL_VERIFICATION="true"` and `VITE_ENABLE_EMAIL_VERIFICATION="true"` in your `.env` file
-2. Install your chosen email service provider package
-3. Configure the email service in your environment variables
-4. Update the `sendEmail` function in `server/auth.ts` with your email service integration
+#### Quick Setup with Resend (Default)
 
-**Example with Resend:**
+1. **Install Resend** (already included):
+   ```bash
+   pnpm add resend
+   ```
 
-```bash
-# Install Resend
-pnpm add resend
-```
+2. **Get your Resend API key**:
+   - Sign up at [resend.com](https://resend.com)
+   - Create an API key in your dashboard
+   - Add your domain and verify it (for production)
 
-```typescript
-// server/auth.ts
-import { Resend } from 'resend';
+3. **Configure environment variables**:
+   ```bash
+   EMAIL_FROM="noreply@yourdomain.com"  # Use your verified domain
+   RESEND_API_KEY="your-resend-api-key"
+   ```
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+4. **Enable email verification** (optional):
+   ```bash
+   ENABLE_EMAIL_VERIFICATION="true"
+   VITE_ENABLE_EMAIL_VERIFICATION="true"
+   ```
 
-// In the emailVerification config:
-sendEmail: async ({ user, url }) => {
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM!,
-    to: user.email,
-    subject: 'Verify your email',
-    html: `<a href="${url}">Click here to verify your email</a>`
-  });
-}
-```
+#### Changing Email Providers
 
-**Other email service examples:**
+If you want to use a different email service instead of Resend:
 
-```bash
-# SendGrid
-pnpm add @sendgrid/mail
+1. **Install your preferred email service**:
+   ```bash
+   # SendGrid
+   pnpm add @sendgrid/mail
+   
+   # Postmark  
+   pnpm add postmark
+   
+   # Nodemailer
+   pnpm add nodemailer
+   
+   # Mailgun
+   pnpm add mailgun.js
+   ```
 
-# Postmark
-pnpm add postmark
+2. **Update `server/auth.ts`**:
+   Replace the Resend import and configuration with your chosen provider:
 
-# Nodemailer
-pnpm add nodemailer
-```
+   ```typescript
+   // Example: Replace Resend with SendGrid
+   import sgMail from '@sendgrid/mail'
+   
+   sgMail.setApiKey(process.env.SENDGRID_API_KEY!)
+   
+   // In the emailVerification and sendResetPassword configs:
+   await sgMail.send({
+     to: user.email,
+     from: process.env.EMAIL_FROM!,
+     subject: 'Verify your email',
+     html: `<a href="${url}">Click here to verify your email</a>`
+   })
+   ```
 
-**Behavior when email verification is disabled:**
+3. **Update environment variables**:
+   Remove Resend variables and add your provider's variables:
+   ```bash
+   # Remove
+   # RESEND_API_KEY="your-resend-api-key"
+   
+   # Add your provider's variables
+   SENDGRID_API_KEY="your-sendgrid-api-key"
+   # or
+   POSTMARK_API_TOKEN="your-postmark-token"
+   # or  
+   MAILGUN_API_KEY="your-mailgun-api-key"
+   ```
+
+#### Email Verification Behavior
+
+**When disabled** (default):
 - Users are automatically signed in after registration
 - No verification email is sent
 - Users are redirected directly to the dashboard
 
-**Behavior when email verification is enabled:**
+**When enabled**:
 - Users must verify their email before signing in
 - A verification email is sent upon registration
 - Users are redirected to a "check your email" page
 - Users cannot sign in until their email is verified
+
+### OAuth Providers Setup
+
+The application supports OAuth authentication with GitHub and Google. Here's how to set them up:
+
+#### GitHub OAuth Setup
+
+1. **Create a GitHub OAuth App:**
+   - Go to [GitHub Developer Settings](https://github.com/settings/developers)
+   - Click "New OAuth App"
+   - Fill in the application details:
+     - **Application name**: Your app name
+     - **Homepage URL**: `http://localhost:3000` (for development)
+     - **Authorization callback URL**: `http://localhost:3000/api/auth/callback/github`
+
+2. **Get your credentials:**
+   - After creating the app, copy the **Client ID**
+   - Generate a new **Client Secret**
+
+3. **Add to environment variables:**
+   ```bash
+   # Server-side configuration
+   GITHUB_CLIENT_ID="your-github-client-id"
+   GITHUB_CLIENT_SECRET="your-github-client-secret"
+   
+   # Client-side configuration (for UI buttons)
+   VITE_GITHUB_CLIENT_ID="your-github-client-id"
+   ```
+
+4. **For production deployment:**
+   - Update the **Homepage URL** to your production domain
+   - Update the **Authorization callback URL** to `https://yourdomain.com/api/auth/callback/github`
+
+#### Google OAuth Setup
+
+1. **Create a Google OAuth App:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the Google+ API
+   - Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client IDs"
+
+2. **Configure OAuth consent screen:**
+   - Fill in the required application information
+   - Add your domain to authorized domains
+
+3. **Create OAuth 2.0 Client ID:**
+   - Application type: **Web application**
+   - **Authorized JavaScript origins**: `http://localhost:3000` (for development)
+   - **Authorized redirect URIs**: `http://localhost:3000/api/auth/callback/google`
+
+4. **Get your credentials:**
+   - Copy the **Client ID** and **Client Secret**
+
+5. **Add to environment variables:**
+   ```bash
+   # Server-side configuration
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   
+   # Client-side configuration (for UI buttons)
+   VITE_GOOGLE_CLIENT_ID="your-google-client-id"
+   ```
+
+6. **For production deployment:**
+   - Update authorized origins to your production domain
+   - Update redirect URI to `https://yourdomain.com/api/auth/callback/google`
+
+#### Testing OAuth Integration
+
+Once configured, users will see GitHub and Google sign-in options on the authentication pages. The OAuth providers are conditionally enabled based on the presence of their respective environment variables.
 
 ### Adding shadcn/ui Components
 ```bash
