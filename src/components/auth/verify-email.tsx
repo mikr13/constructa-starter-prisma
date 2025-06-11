@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useRouter } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
 import { verifyEmail, sendVerificationEmail } from "~/lib/auth-client"
@@ -14,7 +14,7 @@ export function VerifyEmail({ email, token }: VerifyEmailProps) {
   const [isResending, setIsResending] = useState(false)
   const [message, setMessage] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
-  const router = useRouter()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (token) {
@@ -36,7 +36,7 @@ export function VerifyEmail({ email, token }: VerifyEmailProps) {
         setMessage("Email verified successfully! You can now sign in.")
         setIsSuccess(true)
         setTimeout(() => {
-          router.navigate({ to: "/sign-in" })
+          navigate({ to: "/sign-in" })
         }, 2000)
       }
     } catch (error) {

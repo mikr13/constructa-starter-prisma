@@ -9,7 +9,7 @@ import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { forgetPassword } from '~/lib/auth-client'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/(auth)/forgot-password')({
   component: ForgotPasswordPage,
 })
 
