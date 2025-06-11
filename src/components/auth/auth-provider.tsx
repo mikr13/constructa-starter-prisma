@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext } from 'react'
 import { useSession } from '~/lib/auth-client'
 
 interface AuthContextType {

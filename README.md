@@ -75,6 +75,27 @@ src/
 
 ## 🔧 Configuration
 
+### Environment Variables
+
+Create a `.env` file in the root directory based on `.env.example`:
+
+```bash
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/constructa"
+
+# Client-side Base URL (optional - defaults to current origin in production)
+VITE_BASE_URL="http://localhost:3000"
+
+# OAuth Providers (optional)
+GITHUB_CLIENT_ID="your-github-client-id"
+GITHUB_CLIENT_SECRET="your-github-client-secret"
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+```
+
+- `VITE_BASE_URL` is optional - in production, it will automatically use the current domain
+- For local development, it defaults to `http://localhost:3000`
+
 ### Adding shadcn/ui Components
 ```bash
 # Add new components

@@ -12,8 +12,8 @@
         "db:generate": "npx drizzle-kit generate",
         "db:migrate": "npx drizzle-kit migrate",
         "db:studio": "npx drizzle-kit studio",
-        "biome:fix:unsafe": "biome check --fix --unsafe",
-        "biome:check": "biome check",
+        "lint": "oxlint",
+        "lint:fix": "oxlint --fix",
         "auth:init": "npx -y @better-auth/cli@latest generate --config server/auth.ts --output server/db/auth.schema.ts",
         "ex0": "tsx cli/index.ts"
     },
@@ -64,7 +64,6 @@
         "zod": "^3.25.56"
     },
     "devDependencies": {
-        "@biomejs/biome": "1.9.4",
         "@napi-rs/cli": "^2.18.4",
         "@tailwindcss/postcss": "^4.1.8",
         "@tailwindcss/vite": "^4.1.8",
@@ -81,6 +80,7 @@
         "autoprefixer": "^10.4.21",
         "class-variance-authority": "^0.7.1",
         "dotenv": "^16.5.0",
+        "oxlint": "^1.0.0",
         "shadcn": "^2.6.1",
         "tailwindcss": "^4.1.6",
         "tw-animate-css": "^1.3.4",

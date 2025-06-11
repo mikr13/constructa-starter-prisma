@@ -1,16 +1,16 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { reactStartCookies } from "better-auth/react-start"
 import { db } from "./db"
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
-  secret: process.env.BETTER_AUTH_SECRET || "your-secret-key-here",
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   emailAndPassword: {
     enabled: true,
   },
+  plugins: [reactStartCookies()],
   socialProviders: {
     ...(process.env.GITHUB_CLIENT_ID && {
       github: {

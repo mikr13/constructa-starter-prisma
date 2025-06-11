@@ -14,6 +14,7 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as DocsRouteImport } from './routes/docs'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as marketingRouteRouteImport } from './routes/(marketing)/route'
 import { Route as marketingIndexRouteImport } from './routes/(marketing)/index'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
@@ -24,6 +25,12 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -59,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof marketingRouteRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
     '/docs': {
@@ -101,6 +115,15 @@ declare module './routes/(marketing)/route' {
     FileRoutesByPath['/(marketing)']['id'],
     FileRoutesByPath['/(marketing)']['path'],
     FileRoutesByPath['/(marketing)']['fullPath']
+  >
+}
+declare module './routes/dashboard' {
+  const createFileRoute: CreateFileRoute<
+    '/dashboard',
+    FileRoutesByPath['/dashboard']['parentRoute'],
+    FileRoutesByPath['/dashboard']['id'],
+    FileRoutesByPath['/dashboard']['path'],
+    FileRoutesByPath['/dashboard']['fullPath']
   >
 }
 declare module './routes/docs' {
@@ -156,12 +179,14 @@ const marketingRouteRouteWithChildren = marketingRouteRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof marketingIndexRoute
+  '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
 }
 
 export interface FileRoutesByTo {
+  '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
@@ -171,6 +196,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/(marketing)': typeof marketingRouteRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/docs': typeof DocsRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
@@ -179,12 +205,13 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/docs' | '/sign-in' | '/sign-up'
+  fullPaths: '/' | '/dashboard' | '/docs' | '/sign-in' | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/docs' | '/sign-in' | '/sign-up' | '/'
+  to: '/dashboard' | '/docs' | '/sign-in' | '/sign-up' | '/'
   id:
     | '__root__'
     | '/(marketing)'
+    | '/dashboard'
     | '/docs'
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
@@ -194,6 +221,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   marketingRouteRoute: typeof marketingRouteRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   DocsRoute: typeof DocsRoute
   authSignInRoute: typeof authSignInRoute
   authSignUpRoute: typeof authSignUpRoute
@@ -201,6 +229,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   marketingRouteRoute: marketingRouteRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   DocsRoute: DocsRoute,
   authSignInRoute: authSignInRoute,
   authSignUpRoute: authSignUpRoute,
@@ -217,6 +246,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/(marketing)",
+        "/dashboard",
         "/docs",
         "/(auth)/sign-in",
         "/(auth)/sign-up"
@@ -227,6 +257,9 @@ export const routeTree = rootRoute
       "children": [
         "/(marketing)/"
       ]
+    },
+    "/dashboard": {
+      "filePath": "dashboard.tsx"
     },
     "/docs": {
       "filePath": "docs.tsx"
