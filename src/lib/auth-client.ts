@@ -1,9 +1,8 @@
 import { createAuthClient } from "better-auth/react"
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NODE_ENV === 'production' 
-    ? 'https://your-domain.com' 
-    : 'http://localhost:3000'
+  baseURL: import.meta.env.VITE_BASE_URL || 
+    (import.meta.env.PROD ? window.location.origin : 'http://localhost:3000')
 })
 
 export const {

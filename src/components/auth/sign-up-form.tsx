@@ -52,6 +52,7 @@ export function SignUpForm() {
         })
       }
     } catch (error) {
+      console.error(error)
       setError("root", { message: "Something went wrong" })
     } finally {
       setIsLoading(false)
