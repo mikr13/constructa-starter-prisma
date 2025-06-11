@@ -92,9 +92,7 @@ BETTER_AUTH_URL="http://localhost:3000"
 
 # Email Verification (disabled by default)
 # Set to 'true' to enable email verification
-# Both variables must be set to the same value
 ENABLE_EMAIL_VERIFICATION="false"
-VITE_ENABLE_EMAIL_VERIFICATION="false"
 
 # Email Service Configuration (required if email verification is enabled)
 # Configure your email service here (Resend, SendGrid, etc.)
