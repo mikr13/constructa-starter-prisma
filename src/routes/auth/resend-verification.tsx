@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,7 +9,7 @@ import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { sendVerificationEmail } from '~/lib/auth-client'
 
-export const Route = createFileRoute('/auth/resend-verification')({
+export const Route = createFileRoute({
   component: ResendVerificationPage,
 })
 

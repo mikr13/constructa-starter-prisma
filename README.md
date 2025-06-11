@@ -86,6 +86,19 @@ DATABASE_URL="postgresql://username:password@localhost:5432/constructa"
 # Client-side Base URL (optional - defaults to current origin in production)
 VITE_BASE_URL="http://localhost:3000"
 
+# Better Auth
+BETTER_AUTH_SECRET="your-secret-key-here"
+BETTER_AUTH_URL="http://localhost:3000"
+
+# Email Verification (disabled by default)
+# Set to 'true' to enable email verification
+ENABLE_EMAIL_VERIFICATION="false"
+
+# Email Service Configuration (required if email verification is enabled)
+# Configure your email service here (Resend, SendGrid, etc.)
+# EMAIL_FROM="noreply@yourdomain.com"
+# RESEND_API_KEY="your-resend-api-key"
+
 # OAuth Providers (optional)
 GITHUB_CLIENT_ID="your-github-client-id"
 GITHUB_CLIENT_SECRET="your-github-client-secret"
@@ -95,6 +108,34 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
 - `VITE_BASE_URL` is optional - in production, it will automatically use the current domain
 - For local development, it defaults to `http://localhost:3000`
+
+### Email Verification
+
+Email verification is **disabled by default** for easier development. To enable it:
+
+1. Set `ENABLE_EMAIL_VERIFICATION="true"` in your `.env` file
+2. Configure an email service provider (e.g., Resend, SendGrid, Postmark)
+3. Update the `sendEmail` function in `server/auth.ts` with your email service integration
+
+**Example with Resend:**
+```typescript
+// server/auth.ts
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// In the emailVerification config:
+sendEmail: async ({ user, url }) => {
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM!,
+    to: user.email,
+    subject: 'Verify your email',
+    html: `<a href="${url}">Click here to verify your email</a>`
+  });
+}
+```
+
+**Note:** When email verification is disabled, users can sign in immediately after registration without verifying their email.
 
 ### Adding shadcn/ui Components
 ```bash

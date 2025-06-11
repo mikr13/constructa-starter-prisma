@@ -17,6 +17,8 @@ import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as marketingRouteRouteImport } from './routes/(marketing)/route'
 import { Route as marketingIndexRouteImport } from './routes/(marketing)/index'
+import { Route as AuthVerifyEmailRouteImport } from './routes/auth/verify-email'
+import { Route as AuthResendVerificationRouteImport } from './routes/auth/resend-verification'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 
@@ -43,6 +45,18 @@ const marketingIndexRoute = marketingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => marketingRouteRoute,
+} as any)
+
+const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
+  id: '/auth/verify-email',
+  path: '/auth/verify-email',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthResendVerificationRoute = AuthResendVerificationRouteImport.update({
+  id: '/auth/resend-verification',
+  path: '/auth/resend-verification',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const authSignUpRoute = authSignUpRouteImport.update({
@@ -94,6 +108,20 @@ declare module '@tanstack/react-router' {
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof authSignUpRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/resend-verification': {
+      id: '/auth/resend-verification'
+      path: '/auth/resend-verification'
+      fullPath: '/auth/resend-verification'
+      preLoaderRoute: typeof AuthResendVerificationRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/verify-email': {
+      id: '/auth/verify-email'
+      path: '/auth/verify-email'
+      fullPath: '/auth/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteImport
       parentRoute: typeof rootRoute
     }
     '/(marketing)/': {
@@ -153,6 +181,24 @@ declare module './routes/(auth)/sign-up' {
     FileRoutesByPath['/(auth)/sign-up']['fullPath']
   >
 }
+declare module './routes/auth/resend-verification' {
+  const createFileRoute: CreateFileRoute<
+    '/auth/resend-verification',
+    FileRoutesByPath['/auth/resend-verification']['parentRoute'],
+    FileRoutesByPath['/auth/resend-verification']['id'],
+    FileRoutesByPath['/auth/resend-verification']['path'],
+    FileRoutesByPath['/auth/resend-verification']['fullPath']
+  >
+}
+declare module './routes/auth/verify-email' {
+  const createFileRoute: CreateFileRoute<
+    '/auth/verify-email',
+    FileRoutesByPath['/auth/verify-email']['parentRoute'],
+    FileRoutesByPath['/auth/verify-email']['id'],
+    FileRoutesByPath['/auth/verify-email']['path'],
+    FileRoutesByPath['/auth/verify-email']['fullPath']
+  >
+}
 declare module './routes/(marketing)/index' {
   const createFileRoute: CreateFileRoute<
     '/(marketing)/',
@@ -183,6 +229,8 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/auth/resend-verification': typeof AuthResendVerificationRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
 }
 
 export interface FileRoutesByTo {
@@ -190,6 +238,8 @@ export interface FileRoutesByTo {
   '/docs': typeof DocsRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/auth/resend-verification': typeof AuthResendVerificationRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/': typeof marketingIndexRoute
 }
 
@@ -200,14 +250,30 @@ export interface FileRoutesById {
   '/docs': typeof DocsRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
+  '/auth/resend-verification': typeof AuthResendVerificationRoute
+  '/auth/verify-email': typeof AuthVerifyEmailRoute
   '/(marketing)/': typeof marketingIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/docs' | '/sign-in' | '/sign-up'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/docs'
+    | '/sign-in'
+    | '/sign-up'
+    | '/auth/resend-verification'
+    | '/auth/verify-email'
   fileRoutesByTo: FileRoutesByTo
-  to: '/dashboard' | '/docs' | '/sign-in' | '/sign-up' | '/'
+  to:
+    | '/dashboard'
+    | '/docs'
+    | '/sign-in'
+    | '/sign-up'
+    | '/auth/resend-verification'
+    | '/auth/verify-email'
+    | '/'
   id:
     | '__root__'
     | '/(marketing)'
@@ -215,6 +281,8 @@ export interface FileRouteTypes {
     | '/docs'
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
+    | '/auth/resend-verification'
+    | '/auth/verify-email'
     | '/(marketing)/'
   fileRoutesById: FileRoutesById
 }
@@ -225,6 +293,8 @@ export interface RootRouteChildren {
   DocsRoute: typeof DocsRoute
   authSignInRoute: typeof authSignInRoute
   authSignUpRoute: typeof authSignUpRoute
+  AuthResendVerificationRoute: typeof AuthResendVerificationRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -233,6 +303,8 @@ const rootRouteChildren: RootRouteChildren = {
   DocsRoute: DocsRoute,
   authSignInRoute: authSignInRoute,
   authSignUpRoute: authSignUpRoute,
+  AuthResendVerificationRoute: AuthResendVerificationRoute,
+  AuthVerifyEmailRoute: AuthVerifyEmailRoute,
 }
 
 export const routeTree = rootRoute
@@ -249,7 +321,9 @@ export const routeTree = rootRoute
         "/dashboard",
         "/docs",
         "/(auth)/sign-in",
-        "/(auth)/sign-up"
+        "/(auth)/sign-up",
+        "/auth/resend-verification",
+        "/auth/verify-email"
       ]
     },
     "/(marketing)": {
@@ -269,6 +343,12 @@ export const routeTree = rootRoute
     },
     "/(auth)/sign-up": {
       "filePath": "(auth)/sign-up.tsx"
+    },
+    "/auth/resend-verification": {
+      "filePath": "auth/resend-verification.tsx"
+    },
+    "/auth/verify-email": {
+      "filePath": "auth/verify-email.tsx"
     },
     "/(marketing)/": {
       "filePath": "(marketing)/index.tsx",
