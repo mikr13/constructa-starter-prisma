@@ -12,9 +12,13 @@
 
 - **[TanStack Start](https://tanstack.com/start)** - Modern full-stack React framework
 - **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful, accessible component library
-- **[Tailwind CSS v4](https://tailwindcss.com/)** - Modern utility-first CSS framework
+- **[Tailwind CSS](https://tailwindcss.com/)** - Modern utility-first CSS framework
 - **[TypeScript](https://typescriptlang.org/)** - Full type safety
 - **[TanStack Router](https://tanstack.com/router)** - Type-safe file-based routing
+- **[Better Auth](https://better-auth.com/)** - Modern authentication library
+- **[Drizzle ORM](https://orm.drizzle.team/)** - TypeScript ORM for PostgreSQL
+- **[Oxlint](https://oxc.rs/docs/guide/usage/linter.html)** - Fast JavaScript/TypeScript linter
+- **[Vitest](https://vitest.dev/)** - Lightning fast unit testing framework
 
 ## 🚀 Quick Start
 
@@ -44,34 +48,63 @@ pnpm dev          # Start development server
 pnpm build        # Build for production
 pnpm start        # Start production server
 
+# Database
+pnpm db:generate  # Generate database migrations
+pnpm db:migrate   # Run database migrations
+pnpm db:push      # Push schema changes to database
+pnpm db:studio    # Open Drizzle Studio
+
 # Code Quality
-pnpm biome:check  # Check code formatting and linting
-pnpm biome:fix:unsafe # Fix code issues (unsafe)
+pnpm lint         # Check code with Oxlint
+pnpm lint:fix     # Fix linting issues
+pnpm typecheck    # Run TypeScript type checking
+
+# Testing
+pnpm test         # Run tests with Vitest
 ```
 
 ## 📁 Project Structure
 
 ```
 src/
-├── app/
-│   ├── routes/           # File-based routing
-│   │   ├── __root.tsx   # Root layout
-│   │   ├── index.tsx    # Home page
-│   │   └── api/         # API routes
-│   └── styles/          # Global styles
 ├── components/
-│   └── ui/              # shadcn/ui components
+│   ├── auth/            # Authentication components
+│   ├── ui/              # shadcn/ui components
+│   └── ...              # Other reusable components
+├── routes/              # File-based routing
+│   ├── __root.tsx       # Root layout
+│   ├── index.tsx        # Home page
+│   ├── (auth)/          # Auth routes (sign-in, sign-up)
+│   ├── (marketing)/     # Marketing pages
+│   └── api/             # API routes
+├── lib/                 # Utility libraries
+├── hooks/               # Custom React hooks
+├── styles/              # Global styles
 └── utils/               # Utility functions
+
+server/
+├── auth.ts              # Better Auth configuration
+└── db/                  # Database configuration and schemas
+
+drizzle/                 # Database migrations
+tests/                   # Test files
 ```
 
 ## 🎯 Core Technologies
 
 | Technology | Purpose | Documentation |
 |------------|---------|---------------|
-| **TanStack Start** | Full-stack framework | [Docs](https://tanstack.com/start) |
+| **TanStack Start** | Full-stack React framework | [Docs](https://tanstack.com/start) |
+| **TanStack Router** | Type-safe file-based routing | [Docs](https://tanstack.com/router) |
+| **Better Auth** | Authentication & user management | [Docs](https://better-auth.com/) |
+| **Drizzle ORM** | Type-safe database ORM | [Docs](https://orm.drizzle.team/) |
+| **PostgreSQL** | Database | [Docs](https://postgresql.org/) |
 | **shadcn/ui** | Component library | [Docs](https://ui.shadcn.com/) |
-| **Tailwind CSS v4** | Styling framework | [Docs](https://tailwindcss.com/) |
+| **Tailwind CSS** | Utility-first CSS framework | [Docs](https://tailwindcss.com/) |
 | **TypeScript** | Type safety | [Docs](https://typescriptlang.org/) |
+| **Oxlint** | Fast JavaScript/TypeScript linter | [Docs](https://oxc.rs/) |
+| **Vitest** | Unit testing framework | [Docs](https://vitest.dev/) |
+| **Resend** | Email delivery service | [Docs](https://resend.com/) |
 
 ## 🔧 Configuration
 
@@ -285,14 +318,28 @@ npx shadcn@latest add card
 npx shadcn@latest add input
 ```
 
-### Tailwind CSS
-- Uses Tailwind CSS v4 with modern CSS-first configuration
-- Configured in `app.config.ts`
-- Global styles in `src/app/styles/`
+### Database
+- **PostgreSQL** with Drizzle ORM for type-safe database operations
+- **Docker Compose** setup included for local development
+- **Drizzle Studio** for database visualization and management
 
-### TypeScript
-- **Path aliases**: `@` resolves to the root `./` directory
-- **Route files**: Must use `.tsx` extension
+### Authentication
+- **Better Auth** provides secure authentication with email/password and OAuth
+- **Protected routes** with automatic redirects
+- **Email verification** and password reset functionality
+- **GitHub & Google OAuth** support
+
+### Styling & Components
+- **Tailwind CSS** for utility-first styling
+- **shadcn/ui** for beautiful, accessible components
+- **CSS custom properties** for theming support
+- **Dark/light mode** toggle included
+
+### Development Tools
+- **Oxlint** for fast linting
+- **TypeScript** for type safety
+- **Vitest** for testing
+- **Path aliases**: `~` resolves to `src/` directory
 
 ## 🚀 Deployment
 
