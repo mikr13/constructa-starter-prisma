@@ -1,6 +1,7 @@
 import dotenv from "dotenv"
 import "dotenv/config"
 import { execSync } from "node:child_process"
+import { existsSync } from "node:fs"
 import { basename } from "node:path"
 import * as p from "@clack/prompts"
 import { blue, cyan, green, red, yellow } from "ansis"
@@ -58,10 +59,32 @@ const initCommand = defineCommand({
         runCommand("docker compose up -d", "Start Docker containers")
         runCommand("npx drizzle-kit generate", "Generate Drizzle kit")
         runCommand("npx drizzle-kit migrate", "Run Drizzle migrations")
-        runCommand(
-            "npx -y @better-auth/cli@latest generate --config server/auth.ts --output server/db/auth.schema.ts",
-            "Generate Better Auth schema"
-        )
+
+        // Check if auth schema already exists
+        const authSchemaPath = "src/server/db/auth.schema.ts"
+        const dbSchemaPath = "src/db/schema/auth.schema.ts"
+
+        if (existsSync(authSchemaPath) && existsSync(dbSchemaPath)) {
+            console.log(green("✅ Better Auth schema files already exist"))
+        } else {
+            try {
+                runCommand(
+                    "npx -y @better-auth/cli@latest generate --config src/server/auth.ts --output src/server/db/auth.schema.ts",
+                    "Generate Better Auth schema"
+                )
+            } catch (error) {
+                // Check if the files were created despite the error
+                if (existsSync(authSchemaPath)) {
+                    console.log(
+                        yellow(
+                            "⚠️ Better Auth CLI reported an error, but schema file was created successfully"
+                        )
+                    )
+                } else {
+                    throw error // Re-throw if file wasn't created
+                }
+            }
+        }
 
         console.log(cyan("🎉 Project initialization complete!"))
     }
@@ -96,43 +119,90 @@ const reloadCommand = defineCommand({
 const recreateCommand = defineCommand({
     meta: {
         name: "recreate",
-        description: "Recreate Docker containers and volume (WARNING: deletes all data!)"
+        description: "Recreate Docker containers (optionally wipe data volume)"
     },
-    async run() {
+    args: {
+        wipeVolume: {
+            type: "boolean",
+            description: "Also delete the data volume (DANGER: all data will be lost)",
+            default: false
+        }
+    },
+    async run({ args }) {
         // Dynamically determine the project name and volume name
         const projectName = basename(process.cwd())
         const volumeName = `${projectName}_ex0-data`
 
-        // Use clack prompts for warning and confirmation
-        p.log.warn(
-            `🚨 WARNING: This command will stop containers, delete the associated volume (${volumeName}), and start fresh containers.`
-        )
-        p.log.error(`🚨 ALL DATA IN THE VOLUME WILL BE PERMANENTLY LOST.
-`)
+        const { wipeVolume } = args
 
-        const shouldRecreate = await p.confirm({
-            message: "Are you absolutely sure you want to delete the volume and all its data?",
-            initialValue: false
-        })
+        if (wipeVolume) {
+            // Use clack prompts for warning and confirmation only when wiping data
+            p.log.warn(
+                `🚨 WARNING: This command will stop containers, delete the associated volume (${volumeName}), and start fresh containers.`
+            )
+            p.log.error("🚨 ALL DATA IN THE VOLUME WILL BE PERMANENTLY LOST.\n")
 
-        if (p.isCancel(shouldRecreate) || !shouldRecreate) {
-            p.cancel("Operation cancelled.")
-            return
+            const confirmWipe = await p.confirm({
+                message: "Are you absolutely sure you want to delete the volume and all its data?",
+                initialValue: false
+            })
+
+            if (p.isCancel(confirmWipe) || !confirmWipe) {
+                p.cancel("Operation cancelled.")
+                return
+            }
+        } else {
+            p.log.info(
+                `ℹ️ This will recreate containers while keeping the '${volumeName}' volume intact.`
+            )
         }
 
         const s = p.spinner()
-        s.start("Recreating Docker containers and volume...")
+        s.start("Recreating Docker containers ...")
 
-        runCommand("docker compose down", "Stop and remove existing Docker containers")
+        if (wipeVolume) {
+            // Stop and remove containers and volumes.
+            runCommand(
+                "docker compose down --volumes --remove-orphans",
+                "Stop and remove existing Docker containers, networks, and volumes"
+            )
 
-        // Use the dynamic volume name in the remove command
-        runCommand(`docker volume rm ${volumeName}`, `Remove Docker volume ${volumeName}`)
+            // Rare edge-case cleanups
+            runCommand(
+                "sh -c 'docker rm -f ex0-db 2>/dev/null || true'",
+                "Force-remove lingering ex0-db container if it exists"
+            )
 
-        runCommand("docker compose up -d", "Start fresh Docker containers")
+            runCommand(
+                `sh -c 'docker volume rm -f ${volumeName} 2>/dev/null || true'`,
+                `Force-remove Docker volume ${volumeName} if it exists`
+            )
+        } else {
+            // Standard recreate (keep volume)
+            runCommand(
+                "docker compose down --remove-orphans",
+                "Stop and remove existing Docker containers and networks (keeping volumes)"
+            )
+        }
 
-        s.stop("✅ Docker containers and volume recreated successfully")
+        runCommand("docker compose up -d", "Start Docker containers")
 
-        p.outro(`Recreation complete for project '${projectName}'`)
+        s.stop(green("✅ Docker containers recreated successfully"))
+
+        // Offer to run the init command afterwards
+        const shouldInit = await p.confirm({
+            message:
+                "Would you like to run the 'init' command now to install dependencies and run migrations?",
+            initialValue: false
+        })
+
+        if (!p.isCancel(shouldInit) && shouldInit) {
+            runCommand("pnpm run ex0 -- init", "Run init command")
+        }
+
+        p.outro(
+            `Recreation complete for project '${projectName}'${wipeVolume ? " (data volume wiped)" : ""}`
+        )
     }
 })
 
@@ -168,13 +238,13 @@ const testdataCommand = defineCommand({
         try {
             if (args.create) {
                 s.start("Inserting test data...")
-                const { createTestData } = await import("../server/db/test-data")
-                await createTestData()
+                const { createAllTestData } = await import("../src/db/test-data")
+                await createAllTestData()
                 s.stop(green("✅ Inserted test data"))
             } else {
                 s.start("Deleting test data...")
-                const { deleteTestData } = await import("../server/db/test-data")
-                await deleteTestData()
+                const { deleteAllTestData } = await import("../src/db/test-data")
+                await deleteAllTestData()
                 s.stop(green("✅ Deleted test data"))
             }
         } catch (error: unknown) {

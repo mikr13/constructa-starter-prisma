@@ -1,10 +1,12 @@
-import { defineConfig } from "drizzle-kit"
+import type { Config } from "drizzle-kit"
 
-export default defineConfig({
-  schema: "./server/db/auth.schema.ts",
-  out: "./drizzle",
-  dialect: "postgresql",
-  dbCredentials: {
-    url: process.env.DATABASE_URL || "postgresql://localhost:5432/constructa",
-  },
-})
+export default {
+    out: "./drizzle",
+    schema: "./src/db/schema/index.ts",
+    dialect: "postgresql",
+    dbCredentials: {
+        url: process.env.DATABASE_URL as string
+    },
+    verbose: true,
+    strict: true
+} satisfies Config

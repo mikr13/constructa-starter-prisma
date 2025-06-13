@@ -49,29 +49,38 @@ pnpm biome:check  # Check code formatting and linting
 pnpm biome:fix:unsafe # Fix code issues (unsafe)
 ```
 
-## 📁 Project Structure
+### Project CLI (`pnpm ex0`)
 
-```
-src/
-├── app/
-│   ├── routes/           # File-based routing
-│   │   ├── __root.tsx   # Root layout
-│   │   ├── index.tsx    # Home page
-│   │   └── api/         # API routes
-│   └── styles/          # Global styles
-├── components/
-│   └── ui/              # shadcn/ui components
-└── utils/               # Utility functions
-```
+This project includes a custom CLI tool for common tasks. Run it using `pnpm ex0 <command>`.
 
-## 🎯 Core Technologies
+| Command    | Description                                                                | Args                 |
+| :--------- | :------------------------------------------------------------------------- | :------------------- |
+| `init`     | Initialize the project (dependencies, DB setup, Docker)                    |                      |
+| `stop`     | Stop running Docker containers                                             |                      |
+| `reload`   | Reload Docker containers with updated configuration                        |                      |
+| `recreate` | Recreate Docker containers and volume (WARNING: deletes all data!)         |                      |
+| `recreate` | Recreate Docker containers (use <code>--wipeVolume</code> to also delete the data volume) | `--wipeVolume` |
+| `testdata` | Create or delete seed test data in the database                            | `--create`, `--delete` |
+| `deploy`   | [TODO] Deploy the application                                              |                      |
 
-| Technology | Purpose | Documentation |
-|------------|---------|---------------|
-| **TanStack Start** | Full-stack framework | [Docs](https://tanstack.com/start) |
-| **shadcn/ui** | Component library | [Docs](https://ui.shadcn.com/) |
-| **Tailwind CSS v4** | Styling framework | [Docs](https://tailwindcss.com/) |
-| **TypeScript** | Type safety | [Docs](https://typescriptlang.org/) |
+### npm/pnpm Scripts
+
+Standard project scripts are available via `pnpm <script-name>`.
+
+| Script             | Description                                      | Underlying Command                                                                       |
+| :----------------- | :----------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| `dev`              | Start development server                         | `vinxi dev`                                                                              |
+| `build`            | Build the project                                | `vinxi build`                                                                            |
+| `start`            | Start production server                          | `vinxi start`                                                                            |
+| `test`             | Run tests                                        | `vitest`                                                                                 |
+| `db:pull`          | Pull database schema using Drizzle Kit           | `npx drizzle-kit pull`                                                                   |
+| `db:generate`      | Generate Drizzle migrations/schema changes       | `npx drizzle-kit generate`                                                               |
+| `db:migrate`       | Apply Drizzle migrations                         | `npx drizzle-kit migrate`                                                                |
+| `biome:fix:unsafe` | Fix code style issues (includes unsafe fixes)    | `biome check --fix --unsafe`                                                             |
+| `biome:check`      | Check code style issues                          | `biome check`                                                                            |
+| `auth:init`        | Generate Better Auth schema                      | `npx -y @better-auth/cli@latest generate --config src/server/auth.ts --output src/server/db/auth.schema.ts` |
+| `ex0`              | Run the custom project CLI                       | `tsx cli/index.ts`                                                                       |
+
 
 ## 🔧 Configuration
 

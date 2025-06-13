@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:alpine
+    image: pgvector/pgvector:0.8.0-pg17
     container_name: ex0-db
     restart: unless-stopped
     environment:
