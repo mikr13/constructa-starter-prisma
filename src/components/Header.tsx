@@ -20,6 +20,14 @@ export function Header() {
                 </Link>
 
                 <nav className="flex items-center gap-6">
+                    {isAuthenticated && (
+                        <Link 
+                            to="/dashboard" 
+                            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            Dashboard
+                        </Link>
+                    )}
                     <Link 
                         to="/docs" 
                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"

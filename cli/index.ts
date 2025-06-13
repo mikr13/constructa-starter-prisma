@@ -33,14 +33,14 @@ const checkDocker = () => {
     try {
         execSync("docker --version", { stdio: "pipe" }) // Check if docker command exists
     } catch (error) {
-        console.error(red("❌ Error: Docker command not found. Please install Docker."))
+        console.error(red("❌ Error: Docker command not found. Please install Docker."), error)
         process.exit(1)
     }
     try {
         execSync("docker info", { stdio: "pipe" }) // Check if docker daemon is running
         console.log(green("✅ Docker is installed and running."))
     } catch (error) {
-        console.error(red("❌ Error: Docker daemon is not running. Please start Docker."))
+        console.error(red("❌ Error: Docker daemon is not running. Please start Docker."), error)
         process.exit(1)
     }
 }

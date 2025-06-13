@@ -1,4 +1,4 @@
-
+import {  Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -7,19 +7,19 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { sendVerificationEmail } from '~/lib/auth-client'
+import { forgetPassword } from '~/lib/auth-client'
 
 export const Route = createFileRoute({
-  component: ResendVerificationPage,
+  component: ForgotPasswordPage,
 })
 
-const resendSchema = z.object({
+const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
 })
 
-type ResendFormData = z.infer<typeof resendSchema>
+type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>
 
-function ResendVerificationPage() {
+function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
@@ -28,29 +28,30 @@ function ResendVerificationPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ResendFormData>({
-    resolver: zodResolver(resendSchema),
+  } = useForm<ForgotPasswordData>({
+    resolver: zodResolver(forgotPasswordSchema),
   })
 
-  const onSubmit = async (data: ResendFormData) => {
+  const onSubmit = async (data: ForgotPasswordData) => {
     setIsLoading(true)
     setMessage("")
     
     try {
-      const result = await sendVerificationEmail({
+      const result = await forgetPassword({
         email: data.email,
+        redirectTo: "/reset-password",
       })
 
       if (result.error) {
-        setMessage(result.error.message || "Failed to send verification email")
+        setMessage(result.error.message || "Failed to send reset email")
         setIsSuccess(false)
       } else {
-        setMessage("Verification email sent! Please check your inbox.")
+        setMessage("Password reset email sent! Please check your inbox.")
         setIsSuccess(true)
       }
     } catch (error) {
       console.error(error)
-      setMessage("Failed to send verification email. Please try again.")
+      setMessage("Failed to send reset email. Please try again.")
       setIsSuccess(false)
     } finally {
       setIsLoading(false)
@@ -62,9 +63,9 @@ function ResendVerificationPage() {
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle>Resend Verification Email</CardTitle>
+            <CardTitle>Forgot Password</CardTitle>
             <CardDescription>
-              Enter your email address to receive a new verification link
+              Enter your email address and we'll send you a link to reset your password
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -89,9 +90,15 @@ function ResendVerificationPage() {
                 </p>
               )}
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Sending..." : "Send Verification Email"}
+              <Button type="submit" className="w-full" disabled={isLoading || isSuccess}>
+                {isLoading ? "Sending..." : "Send Reset Email"}
               </Button>
+
+              <div className="text-center text-sm">
+                <Link to="/sign-in" className="text-primary hover:underline">
+                  Back to Sign In
+                </Link>
+              </div>
             </form>
           </CardContent>
         </Card>
