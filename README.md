@@ -1,12 +1,16 @@
-# 🚀 TanStack Starter
+# Constructa Starter
 
 <div align="center">
-  <p><strong>A modern React starter with shadcn/ui and Tailwind CSS 4</strong></p>
-  
-  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org/)
-  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-  [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  <img src="public/constructa_banner_.png" alt="Constructa Starter Banner" width="100%" />
 </div>
+
+<div align="center">
+  <h2>AI-First SAAS Starter Kit</h2>
+  <p>Optimized for coding with AI assistants • Powered by instructa.ai</p>
+</div>
+
+> ⚠️ **Work in Progress** - This starter kit is currently under active development. Features and documentation may change frequently.
+
 
 ## ✨ Features
 
@@ -19,6 +23,7 @@
 - **[Drizzle ORM](https://orm.drizzle.team/)** - TypeScript ORM for PostgreSQL
 - **[Oxlint](https://oxc.rs/docs/guide/usage/linter.html)** - Fast JavaScript/TypeScript linter
 - **[Vitest](https://vitest.dev/)** - Lightning fast unit testing framework
+- **Cursor Rules** - Pre-configured AI coding assistant rules for optimal development experience
 
 ## 🚀 Quick Start
 
@@ -31,7 +36,7 @@
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd tanstack-starter-instructa
+cd constructa-starter
 
 # Install dependencies
 pnpm install
@@ -110,9 +115,9 @@ Standard project scripts are available via `pnpm <script-name>`.
 
 | Script             | Description                                      | Underlying Command                                                                       |
 | :----------------- | :----------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| `dev`              | Start development server                         | `vinxi dev`                                                                              |
-| `build`            | Build the project                                | `vinxi build`                                                                            |
-| `start`            | Start production server                          | `vinxi start`                                                                            |
+| `dev`              | Start development server                         | `vite`                                                                                   |
+| `build`            | Build the project                                | `vite build`                                                                             |
+| `start`            | Start production server                          | `vite preview`                                                                           |
 | `test`             | Run tests                                        | `vitest`                                                                                 |
 | `db:pull`          | Pull database schema using Drizzle Kit           | `npx drizzle-kit pull`                                                                   |
 | `db:generate`      | Generate Drizzle migrations/schema changes       | `npx drizzle-kit generate`                                                               |
