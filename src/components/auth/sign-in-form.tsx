@@ -13,6 +13,7 @@ import {
   PasswordInput,
   type AuthLocalization,
   GoogleIcon,
+  GitHubIcon,
 } from '@daveyplate/better-auth-ui';
 import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
@@ -26,6 +27,7 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
+import { formClassNames } from './auth-styles';
 
 export interface SignInFormProps {
   className?: string;
@@ -34,29 +36,6 @@ export interface SignInFormProps {
   redirectTo?: string;
   setIsSubmitting?: (isSubmitting: boolean) => void;
 }
-
-// Import styling from custom-auth-card
-const formClassNames = {
-  base: 'space-y-4',
-  description: 'hidden',
-  label: 'block text-sm font-medium text-gray-700 mb-1.5',
-  input:
-    'w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent placeholder-gray-400 transition-all hover:border-gray-300',
-  error: 'text-sm text-red-500 mt-1',
-  primaryButton:
-    'w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-pink-600 transition-all transform hover:scale-[1.02] shadow-md',
-  secondaryButton:
-    'w-full py-2.5 px-4 border border-orange-200 text-orange-700 rounded-lg font-medium hover:bg-orange-50 hover:border-orange-300 transition-colors',
-  outlineButton:
-    'text-orange-600 font-medium hover:text-orange-700 underline decoration-orange-200 underline-offset-2',
-  forgotPasswordLink:
-    'text-orange-600 font-medium hover:text-orange-700 underline decoration-orange-200 underline-offset-2',
-  providerButton:
-    'w-full py-2.5 px-4 border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 shadow-sm',
-  icon: 'w-5 h-5',
-  checkbox: 'rounded border-gray-300 text-orange-500 focus:ring-orange-400',
-  button: 'inline-flex items-center justify-center',
-};
 
 export function SignInForm({
   className,
@@ -212,7 +191,7 @@ export function SignInForm({
         fetchOptions,
       });
 
-      if (response.twoFactorRedirect) {
+      if ('twoFactorRedirect' in response && response.twoFactorRedirect) {
         navigate(`${basePath}/${viewPaths.TWO_FACTOR}${window.location.search}`);
       } else {
         navigate(getRedirectTo());
@@ -245,15 +224,15 @@ export function SignInForm({
 
   return (
     <div className={cn('space-y-6', className)}>
-      {/* Social auth - Google */}
-      <div className="flex justify-center">
+      {/* Social auth - Google & GitHub */}
+      <div className="flex gap-4 justify-center">
         <button
           type="button"
           onClick={() => handleSocialSignIn('google')}
           disabled={isLoading}
           className={cn(
             formClassNames.providerButton,
-            'flex-col gap-1 px-6 py-4 min-w-[100px]',
+            'flex-col gap-1 px-6 py-4 min-w-[100px] flex-1 max-w-[150px]',
             isLoading && 'opacity-50 cursor-not-allowed'
           )}
         >
@@ -263,6 +242,24 @@ export function SignInForm({
             <GoogleIcon className="w-6 h-6" />
           )}
           <span className="text-sm">Google</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => handleSocialSignIn('github')}
+          disabled={isLoading}
+          className={cn(
+            formClassNames.providerButton,
+            'flex-col gap-1 px-6 py-4 min-w-[100px] flex-1 max-w-[150px]',
+            isLoading && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          {isLoadingSocial ? (
+            <Loader2 className="w-6 h-6 animate-spin" />
+          ) : (
+            <GitHubIcon className="w-6 h-6" />
+          )}
+          <span className="text-sm">GitHub</span>
         </button>
       </div>
 
@@ -310,7 +307,9 @@ export function SignInForm({
                       {credentials?.forgotPassword && (
                         <Link
                           className={formClassNames.forgotPasswordLink}
-                          to={`${basePath}/${viewPaths.FORGOT_PASSWORD}${typeof window !== 'undefined' ? window.location.search : ''}`}
+                          to={
+                            `${basePath}/${viewPaths.FORGOT_PASSWORD}${typeof window !== 'undefined' ? window.location.search : ''}` as any
+                          }
                         >
                           {mergedLocalization.FORGOT_PASSWORD_LINK}
                         </Link>
@@ -339,7 +338,7 @@ export function SignInForm({
                       <FormControl>
                         <Checkbox
                           className={formClassNames.checkbox}
-                          checked={field.value}
+                          checked={field.value || false}
                           onCheckedChange={field.onChange}
                           disabled={isLoading}
                         />
@@ -403,21 +402,23 @@ export function SignInForm({
       <p className="text-center text-sm text-gray-600">
         Don't have an account?{' '}
         <Link
-          to={`${basePath}/${viewPaths.SIGN_UP}${typeof window !== 'undefined' ? window.location.search : ''}`}
+          to={
+            `${basePath}/${viewPaths.SIGN_UP}${typeof window !== 'undefined' ? window.location.search : ''}` as any
+          }
           className={formClassNames.outlineButton}
         >
-          {mergedLocalization.SIGN_UP_LINK}
+          {mergedLocalization.SIGN_UP_LINK || 'Sign up'}
         </Link>
       </p>
 
       {/* Terms */}
       <p className="text-center text-xs text-gray-400">
         By signing in, you agree to our{' '}
-        <Link to="/terms" className={formClassNames.outlineButton}>
+        <Link to="/terms" as any className={formClassNames.outlineButton}>
           Terms of Service
         </Link>{' '}
         &amp;{' '}
-        <Link to="/privacy" className={formClassNames.outlineButton}>
+        <Link to="/privacy" as any className={formClassNames.outlineButton}>
           Privacy Policy
         </Link>
         .
@@ -434,5 +435,5 @@ function getLocalizedError(error: unknown, localization: Partial<AuthLocalizatio
   if (typeof error === 'object' && error !== null && 'message' in error) {
     return String(error.message);
   }
-  return localization.ERROR_DEFAULT || 'An error occurred';
+  return localization.ERROR_DEFAULT || localization.UNEXPECTED_ERROR || 'An error occurred';
 }

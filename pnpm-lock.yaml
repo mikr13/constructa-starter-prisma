@@ -19,7 +19,7 @@ importers:
         version: 1.3.6(@tanstack/query-core@5.80.6)(@tanstack/react-query@5.80.6(react@19.1.0))(better-auth@1.2.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@daveyplate/better-auth-ui':
         specifier: github:regenrek/better-auth-ui#main
-        version: https://codeload.github.com/regenrek/better-auth-ui/tar.gz/e76fd84dfe03b7d9b1759bde39c8aabad1fe8a24(oxj65j2lsu7ejxmy46ptgxqxgm)
+        version: https://codeload.github.com/regenrek/better-auth-ui/tar.gz/3f936ac5d7c5e8cf40216f7f347eb356b330b9f3(oxj65j2lsu7ejxmy46ptgxqxgm)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -650,8 +650,8 @@ packages:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
 
-  '@daveyplate/better-auth-ui@https://codeload.github.com/regenrek/better-auth-ui/tar.gz/e76fd84dfe03b7d9b1759bde39c8aabad1fe8a24':
-    resolution: {tarball: https://codeload.github.com/regenrek/better-auth-ui/tar.gz/e76fd84dfe03b7d9b1759bde39c8aabad1fe8a24}
+  '@daveyplate/better-auth-ui@https://codeload.github.com/regenrek/better-auth-ui/tar.gz/3f936ac5d7c5e8cf40216f7f347eb356b330b9f3':
+    resolution: {tarball: https://codeload.github.com/regenrek/better-auth-ui/tar.gz/3f936ac5d7c5e8cf40216f7f347eb356b330b9f3}
     version: 2.0.7
     peerDependencies:
       '@daveyplate/better-auth-tanstack': ^1.3.6
@@ -8931,7 +8931,7 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  '@daveyplate/better-auth-ui@https://codeload.github.com/regenrek/better-auth-ui/tar.gz/e76fd84dfe03b7d9b1759bde39c8aabad1fe8a24(oxj65j2lsu7ejxmy46ptgxqxgm)':
+  '@daveyplate/better-auth-ui@https://codeload.github.com/regenrek/better-auth-ui/tar.gz/3f936ac5d7c5e8cf40216f7f347eb356b330b9f3(oxj65j2lsu7ejxmy46ptgxqxgm)':
     dependencies:
       '@better-fetch/fetch': 1.1.18
       '@daveyplate/better-auth-tanstack': 1.3.6(@tanstack/query-core@5.80.6)(@tanstack/react-query@5.80.6(react@19.1.0))(better-auth@1.2.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

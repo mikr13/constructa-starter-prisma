@@ -3,9 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { BetterFetchOption } from 'better-auth/react';
 import { Loader2 } from 'lucide-react';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { Link } from '@tanstack/react-router';
 
 import { useCaptcha } from '@daveyplate/better-auth-ui';
 import { useIsHydrated } from '@daveyplate/better-auth-ui';
@@ -17,6 +18,7 @@ import type { AuthLocalization } from '@daveyplate/better-auth-ui';
 import type { PasswordValidation } from '@daveyplate/better-auth-ui';
 import { Captcha } from '@daveyplate/better-auth-ui';
 import { PasswordInput } from '@daveyplate/better-auth-ui';
+import { GoogleIcon, GitHubIcon } from '@daveyplate/better-auth-ui';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import {
@@ -28,6 +30,7 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
+import { formClassNames } from './auth-styles';
 
 export interface SignUpFormProps {
   className?: string;
@@ -38,29 +41,6 @@ export interface SignUpFormProps {
   setIsSubmitting?: (value: boolean) => void;
   passwordValidation?: PasswordValidation;
 }
-
-// Import styling from custom-auth-card
-const formClassNames = {
-  base: 'space-y-4',
-  description: 'hidden',
-  label: 'block text-sm font-medium text-gray-700 mb-1.5',
-  input:
-    'w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent placeholder-gray-400 transition-all hover:border-gray-300',
-  error: 'text-sm text-red-500 mt-1',
-  primaryButton:
-    'w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-pink-600 transition-all transform hover:scale-[1.02] shadow-md',
-  secondaryButton:
-    'w-full py-2.5 px-4 border border-orange-200 text-orange-700 rounded-lg font-medium hover:bg-orange-50 hover:border-orange-300 transition-colors',
-  outlineButton:
-    'text-orange-600 font-medium hover:text-orange-700 underline decoration-orange-200 underline-offset-2',
-  forgotPasswordLink:
-    'text-orange-600 font-medium hover:text-orange-700 underline decoration-orange-200 underline-offset-2',
-  providerButton:
-    'w-full py-2.5 px-4 border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 shadow-sm',
-  icon: 'w-5 h-5',
-  checkbox: 'rounded border-gray-300 text-orange-500 focus:ring-orange-400',
-  button: 'inline-flex items-center justify-center',
-};
 
 export function SignUpForm({
   className,
@@ -73,6 +53,7 @@ export function SignUpForm({
 }: SignUpFormProps) {
   const isHydrated = useIsHydrated();
   const { captchaRef, getCaptchaHeaders } = useCaptcha({ localization });
+  const [isLoadingSocial, setIsLoadingSocial] = useState(false);
 
   const {
     additionalFields,
@@ -245,11 +226,12 @@ export function SignUpForm({
     defaultValues,
   });
 
-  const isLoading = isSubmitting || form.formState.isSubmitting || transitionPending;
+  const isLoading =
+    isSubmitting || form.formState.isSubmitting || transitionPending || isLoadingSocial;
 
   useEffect(() => {
-    setIsSubmitting?.(form.formState.isSubmitting || transitionPending);
-  }, [form.formState.isSubmitting, transitionPending, setIsSubmitting]);
+    setIsSubmitting?.(form.formState.isSubmitting || transitionPending || isLoadingSocial);
+  }, [form.formState.isSubmitting, transitionPending, isLoadingSocial, setIsSubmitting]);
 
   async function signUp({
     email,
@@ -310,25 +292,137 @@ export function SignUpForm({
     }
   }
 
+  async function handleSocialSignIn(provider: string) {
+    try {
+      setIsLoadingSocial(true);
+      await authClient.signIn.social({
+        provider,
+        callbackURL: getCallbackURL(),
+      });
+    } catch (error) {
+      toast({
+        variant: 'error',
+        message: getLocalizedError({ error, localization: mergedLocalization }),
+      });
+      setIsLoadingSocial(false);
+    }
+  }
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(signUp)}
-        noValidate={isHydrated}
-        className={cn(formClassNames.base, className)}
-      >
-        {signUpFields?.includes('name') && (
+    <div className={cn('space-y-6', className)}>
+      {/* Social auth - Google & GitHub */}
+      <div className="flex gap-4 justify-center">
+        <button
+          type="button"
+          onClick={() => handleSocialSignIn('google')}
+          disabled={isLoading}
+          className={cn(
+            formClassNames.providerButton,
+            'flex-col gap-1 px-6 py-4 min-w-[100px] flex-1 max-w-[150px]',
+            isLoading && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          {isLoadingSocial ? (
+            <Loader2 className="w-6 h-6 animate-spin" />
+          ) : (
+            <GoogleIcon className="w-6 h-6" />
+          )}
+          <span className="text-sm">Google</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => handleSocialSignIn('github')}
+          disabled={isLoading}
+          className={cn(
+            formClassNames.providerButton,
+            'flex-col gap-1 px-6 py-4 min-w-[100px] flex-1 max-w-[150px]',
+            isLoading && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          {isLoadingSocial ? (
+            <Loader2 className="w-6 h-6 animate-spin" />
+          ) : (
+            <GitHubIcon className="w-6 h-6" />
+          )}
+          <span className="text-sm">GitHub</span>
+        </button>
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-4">
+        <hr className="flex-1 border-gray-200" />
+        <span className="text-sm text-gray-400">or</span>
+        <hr className="flex-1 border-gray-200" />
+      </div>
+
+      {/* Form */}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(signUp)}
+          noValidate={isHydrated}
+          className={cn(formClassNames.base, className)}
+        >
+          {signUpFields?.includes('name') && (
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={formClassNames.label}>{mergedLocalization.NAME}</FormLabel>
+
+                  <FormControl>
+                    <Input
+                      className={formClassNames.input}
+                      placeholder={mergedLocalization.NAME_PLACEHOLDER}
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage className={formClassNames.error} />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {usernameEnabled && (
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={formClassNames.label}>
+                    {mergedLocalization.USERNAME}
+                  </FormLabel>
+
+                  <FormControl>
+                    <Input
+                      className={formClassNames.input}
+                      placeholder={mergedLocalization.USERNAME_PLACEHOLDER}
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage className={formClassNames.error} />
+                </FormItem>
+              )}
+            />
+          )}
+
           <FormField
             control={form.control}
-            name="name"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className={formClassNames.label}>{mergedLocalization.NAME}</FormLabel>
+                <FormLabel className={formClassNames.label}>{mergedLocalization.EMAIL}</FormLabel>
 
                 <FormControl>
                   <Input
                     className={formClassNames.input}
-                    placeholder={mergedLocalization.NAME_PLACEHOLDER}
+                    type="email"
+                    placeholder={mergedLocalization.EMAIL_PLACEHOLDER}
                     disabled={isLoading}
                     {...field}
                   />
@@ -338,93 +432,21 @@ export function SignUpForm({
               </FormItem>
             )}
           />
-        )}
 
-        {usernameEnabled && (
           <FormField
             control={form.control}
-            name="username"
+            name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className={formClassNames.label}>
-                  {mergedLocalization.USERNAME}
-                </FormLabel>
-
-                <FormControl>
-                  <Input
-                    className={formClassNames.input}
-                    placeholder={mergedLocalization.USERNAME_PLACEHOLDER}
-                    disabled={isLoading}
-                    {...field}
-                  />
-                </FormControl>
-
-                <FormMessage className={formClassNames.error} />
-              </FormItem>
-            )}
-          />
-        )}
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className={formClassNames.label}>{mergedLocalization.EMAIL}</FormLabel>
-
-              <FormControl>
-                <Input
-                  className={formClassNames.input}
-                  type="email"
-                  placeholder={mergedLocalization.EMAIL_PLACEHOLDER}
-                  disabled={isLoading}
-                  {...field}
-                />
-              </FormControl>
-
-              <FormMessage className={formClassNames.error} />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className={formClassNames.label}>{mergedLocalization.PASSWORD}</FormLabel>
-
-              <FormControl>
-                <PasswordInput
-                  autoComplete="new-password"
-                  className={formClassNames.input}
-                  placeholder={mergedLocalization.PASSWORD_PLACEHOLDER}
-                  disabled={isLoading}
-                  enableToggle
-                  {...field}
-                />
-              </FormControl>
-
-              <FormMessage className={formClassNames.error} />
-            </FormItem>
-          )}
-        />
-
-        {confirmPasswordEnabled && (
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className={formClassNames.label}>
-                  {mergedLocalization.CONFIRM_PASSWORD}
+                  {mergedLocalization.PASSWORD}
                 </FormLabel>
 
                 <FormControl>
                   <PasswordInput
                     autoComplete="new-password"
                     className={formClassNames.input}
-                    placeholder={mergedLocalization.CONFIRM_PASSWORD_PLACEHOLDER}
+                    placeholder={mergedLocalization.PASSWORD_PLACEHOLDER}
                     disabled={isLoading}
                     enableToggle
                     {...field}
@@ -435,80 +457,135 @@ export function SignUpForm({
               </FormItem>
             )}
           />
-        )}
 
-        {signUpFields
-          ?.filter((field) => field !== 'name' && field !== 'image')
-          .map((field) => {
-            const additionalField = additionalFields?.[field];
-            if (!additionalField) {
-              console.error(`Additional field ${field} not found`);
-              return null;
-            }
+          {confirmPasswordEnabled && (
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={formClassNames.label}>
+                    {mergedLocalization.CONFIRM_PASSWORD}
+                  </FormLabel>
 
-            return additionalField.type === 'boolean' ? (
-              <FormField
-                key={field}
-                control={form.control}
-                name={field}
-                render={({ field: formField }) => (
-                  <FormItem className="flex items-center space-x-2">
-                    <FormControl>
-                      <Checkbox
-                        className={formClassNames.checkbox}
-                        checked={formField.value as boolean}
-                        onCheckedChange={formField.onChange}
-                        disabled={isLoading}
-                      />
-                    </FormControl>
+                  <FormControl>
+                    <PasswordInput
+                      autoComplete="new-password"
+                      className={formClassNames.input}
+                      placeholder={mergedLocalization.CONFIRM_PASSWORD_PLACEHOLDER}
+                      disabled={isLoading}
+                      enableToggle
+                      {...field}
+                    />
+                  </FormControl>
 
-                    <FormLabel className="text-sm font-normal cursor-pointer">
-                      {additionalField.label}
-                    </FormLabel>
+                  <FormMessage className={formClassNames.error} />
+                </FormItem>
+              )}
+            />
+          )}
 
-                    <FormMessage className={formClassNames.error} />
-                  </FormItem>
-                )}
-              />
-            ) : (
-              <FormField
-                key={field}
-                control={form.control}
-                name={field}
-                render={({ field: formField }) => (
-                  <FormItem>
-                    <FormLabel className={formClassNames.label}>{additionalField.label}</FormLabel>
+          {signUpFields
+            ?.filter((field) => field !== 'name' && field !== 'image')
+            .map((field) => {
+              const additionalField = additionalFields?.[field];
+              if (!additionalField) {
+                console.error(`Additional field ${field} not found`);
+                return null;
+              }
 
-                    <FormControl>
-                      <Input
-                        className={formClassNames.input}
-                        type={additionalField.type === 'number' ? 'number' : 'text'}
-                        placeholder={
-                          additionalField.placeholder ||
-                          (typeof additionalField.label === 'string' ? additionalField.label : '')
-                        }
-                        disabled={isLoading}
-                        {...formField}
-                      />
-                    </FormControl>
+              return additionalField.type === 'boolean' ? (
+                <FormField
+                  key={field}
+                  control={form.control}
+                  name={field}
+                  render={({ field: formField }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <Checkbox
+                          className={formClassNames.checkbox}
+                          checked={formField.value as boolean}
+                          onCheckedChange={formField.onChange}
+                          disabled={isLoading}
+                        />
+                      </FormControl>
 
-                    <FormMessage className={formClassNames.error} />
-                  </FormItem>
-                )}
-              />
-            );
-          })}
+                      <FormLabel className="text-sm font-normal cursor-pointer">
+                        {additionalField.label}
+                      </FormLabel>
 
-        <Captcha ref={captchaRef} localization={mergedLocalization} action="/sign-up/email" />
+                      <FormMessage className={formClassNames.error} />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <FormField
+                  key={field}
+                  control={form.control}
+                  name={field}
+                  render={({ field: formField }) => (
+                    <FormItem>
+                      <FormLabel className={formClassNames.label}>
+                        {additionalField.label}
+                      </FormLabel>
 
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className={cn(formClassNames.button, formClassNames.primaryButton)}
+                      <FormControl>
+                        <Input
+                          className={formClassNames.input}
+                          type={additionalField.type === 'number' ? 'number' : 'text'}
+                          placeholder={
+                            additionalField.placeholder ||
+                            (typeof additionalField.label === 'string' ? additionalField.label : '')
+                          }
+                          disabled={isLoading}
+                          {...formField}
+                        />
+                      </FormControl>
+
+                      <FormMessage className={formClassNames.error} />
+                    </FormItem>
+                  )}
+                />
+              );
+            })}
+
+          <Captcha ref={captchaRef} localization={mergedLocalization} action="/sign-up/email" />
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className={cn(formClassNames.button, formClassNames.primaryButton)}
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : mergedLocalization.SIGN_UP_ACTION}
+          </Button>
+        </form>
+      </Form>
+
+      {/* Sign in link */}
+      <p className="text-center text-sm text-gray-600">
+        Already have an account?{' '}
+        <Link
+          to={
+            `${basePath}/${viewPaths.SIGN_IN}${typeof window !== 'undefined' ? window.location.search : ''}` as any
+          }
+          className={formClassNames.outlineButton}
         >
-          {isLoading ? <Loader2 className="animate-spin" /> : mergedLocalization.SIGN_UP_ACTION}
-        </Button>
-      </form>
-    </Form>
+          {mergedLocalization.SIGN_IN_LINK || 'Sign in'}
+        </Link>
+      </p>
+
+      {/* Terms */}
+      <p className="text-center text-xs text-gray-400">
+        By signing up, you agree to our{' '}
+        <Link to="/terms" as any className={formClassNames.outlineButton}>
+          Terms of Service
+        </Link>{' '}
+        &amp;{' '}
+        <Link to="/privacy" as any className={formClassNames.outlineButton}>
+          Privacy Policy
+        </Link>
+        .
+      </p>
+    </div>
   );
 }
