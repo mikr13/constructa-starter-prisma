@@ -307,9 +307,8 @@ export function SignInForm({
                       {credentials?.forgotPassword && (
                         <Link
                           className={formClassNames.forgotPasswordLink}
-                          to={
-                            `${basePath}/${viewPaths.FORGOT_PASSWORD}${typeof window !== 'undefined' ? window.location.search : ''}` as any
-                          }
+                          to="/auth/forgot-password"
+                          search={(prev) => prev}
                         >
                           {mergedLocalization.FORGOT_PASSWORD_LINK}
                         </Link>
@@ -401,12 +400,7 @@ export function SignInForm({
       {/* Sign up link */}
       <p className="text-center text-sm text-muted-foreground">
         Don't have an account?{' '}
-        <Link
-          to={
-            `${basePath}/${viewPaths.SIGN_UP}${typeof window !== 'undefined' ? window.location.search : ''}` as any
-          }
-          className={formClassNames.outlineButton}
-        >
+        <Link to="/auth/sign-up" search={(prev) => prev} className={formClassNames.outlineButton}>
           {mergedLocalization.SIGN_UP_LINK || 'Sign up'}
         </Link>
       </p>

@@ -18,7 +18,6 @@ import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as marketingRouteRouteImport } from './routes/(marketing)/route'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as marketingIndexRouteImport } from './routes/(marketing)/index'
-import { Route as AuthDemoSignInRouteImport } from './routes/auth/demo-sign-in'
 import { Route as AuthPathnameRouteImport } from './routes/auth/$pathname'
 import { Route as DashboardChartsRouteRouteImport } from './routes/dashboard/charts/route'
 
@@ -51,12 +50,6 @@ const marketingIndexRoute = marketingIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => marketingRouteRoute,
-} as any)
-
-const AuthDemoSignInRoute = AuthDemoSignInRouteImport.update({
-  id: '/auth/demo-sign-in',
-  path: '/auth/demo-sign-in',
-  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthPathnameRoute = AuthPathnameRouteImport.update({
@@ -108,13 +101,6 @@ declare module '@tanstack/react-router' {
       path: '/auth/$pathname'
       fullPath: '/auth/$pathname'
       preLoaderRoute: typeof AuthPathnameRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/auth/demo-sign-in': {
-      id: '/auth/demo-sign-in'
-      path: '/auth/demo-sign-in'
-      fullPath: '/auth/demo-sign-in'
-      preLoaderRoute: typeof AuthDemoSignInRouteImport
       parentRoute: typeof rootRoute
     }
     '/(marketing)/': {
@@ -181,15 +167,6 @@ declare module './routes/auth/$pathname' {
     FileRoutesByPath['/auth/$pathname']['fullPath']
   >
 }
-declare module './routes/auth/demo-sign-in' {
-  const createFileRoute: CreateFileRoute<
-    '/auth/demo-sign-in',
-    FileRoutesByPath['/auth/demo-sign-in']['parentRoute'],
-    FileRoutesByPath['/auth/demo-sign-in']['id'],
-    FileRoutesByPath['/auth/demo-sign-in']['path'],
-    FileRoutesByPath['/auth/demo-sign-in']['fullPath']
-  >
-}
 declare module './routes/(marketing)/index' {
   const createFileRoute: CreateFileRoute<
     '/(marketing)/',
@@ -243,7 +220,6 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRoute
   '/dashboard/charts': typeof DashboardChartsRouteRoute
   '/auth/$pathname': typeof AuthPathnameRoute
-  '/auth/demo-sign-in': typeof AuthDemoSignInRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 
@@ -251,7 +227,6 @@ export interface FileRoutesByTo {
   '/docs': typeof DocsRoute
   '/dashboard/charts': typeof DashboardChartsRouteRoute
   '/auth/$pathname': typeof AuthPathnameRoute
-  '/auth/demo-sign-in': typeof AuthDemoSignInRoute
   '/': typeof marketingIndexRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -263,7 +238,6 @@ export interface FileRoutesById {
   '/docs': typeof DocsRoute
   '/dashboard/charts': typeof DashboardChartsRouteRoute
   '/auth/$pathname': typeof AuthPathnameRoute
-  '/auth/demo-sign-in': typeof AuthDemoSignInRoute
   '/(marketing)/': typeof marketingIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -276,16 +250,9 @@ export interface FileRouteTypes {
     | '/docs'
     | '/dashboard/charts'
     | '/auth/$pathname'
-    | '/auth/demo-sign-in'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/docs'
-    | '/dashboard/charts'
-    | '/auth/$pathname'
-    | '/auth/demo-sign-in'
-    | '/'
-    | '/dashboard'
+  to: '/docs' | '/dashboard/charts' | '/auth/$pathname' | '/' | '/dashboard'
   id:
     | '__root__'
     | '/(marketing)'
@@ -293,7 +260,6 @@ export interface FileRouteTypes {
     | '/docs'
     | '/dashboard/charts'
     | '/auth/$pathname'
-    | '/auth/demo-sign-in'
     | '/(marketing)/'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -304,7 +270,6 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   DocsRoute: typeof DocsRoute
   AuthPathnameRoute: typeof AuthPathnameRoute
-  AuthDemoSignInRoute: typeof AuthDemoSignInRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -312,7 +277,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   DocsRoute: DocsRoute,
   AuthPathnameRoute: AuthPathnameRoute,
-  AuthDemoSignInRoute: AuthDemoSignInRoute,
 }
 
 export const routeTree = rootRoute
@@ -328,8 +292,7 @@ export const routeTree = rootRoute
         "/(marketing)",
         "/dashboard",
         "/docs",
-        "/auth/$pathname",
-        "/auth/demo-sign-in"
+        "/auth/$pathname"
       ]
     },
     "/(marketing)": {
@@ -354,9 +317,6 @@ export const routeTree = rootRoute
     },
     "/auth/$pathname": {
       "filePath": "auth/$pathname.tsx"
-    },
-    "/auth/demo-sign-in": {
-      "filePath": "auth/demo-sign-in.tsx"
     },
     "/(marketing)/": {
       "filePath": "(marketing)/index.tsx",

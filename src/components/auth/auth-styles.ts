@@ -1,7 +1,7 @@
 import type { AuthCardProps, AuthLocalization } from '@daveyplate/better-auth-ui';
 
 export const authCardClassNames: AuthCardProps['classNames'] = {
-  base: 'w-full max-w-md mx-auto bg-background rounded-xl shadow-lg border',
+  base: 'w-full max-w-md mx-auto bg-background rounded-xl shadow-lg dark:shadow-2xl dark:shadow-black/20 border',
   header: 'text-center pb-2',
   title: 'text-2xl font-bold text-foreground',
   description: 'text-sm text-muted-foreground mt-2',
@@ -18,7 +18,7 @@ export const authCardClassNames: AuthCardProps['classNames'] = {
       'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background placeholder-muted-foreground transition-all hover:border-muted-foreground/50 bg-background text-foreground',
     error: 'text-sm text-destructive mt-1',
     primaryButton:
-      'w-full py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all transform hover:scale-[1.02] shadow-md',
+      'w-full py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all transform hover:scale-[1.02] shadow-md dark:shadow-lg dark:shadow-black/20',
     secondaryButton:
       'w-full py-2.5 px-4 border bg-background text-foreground rounded-lg font-medium hover:bg-accent hover:text-accent-foreground transition-colors',
     outlineButton:
@@ -26,7 +26,7 @@ export const authCardClassNames: AuthCardProps['classNames'] = {
     forgotPasswordLink:
       'text-primary font-medium hover:text-primary/80 underline decoration-primary/30 underline-offset-2',
     providerButton:
-      'w-full py-2.5 px-4 border rounded-lg font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-all flex items-center justify-center gap-2 shadow-sm bg-background',
+      'w-full py-2.5 px-4 border rounded-lg font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-all flex items-center justify-center gap-2 shadow-sm dark:shadow-md dark:shadow-black/10 bg-background',
     icon: 'w-5 h-5',
     checkbox: 'rounded border-input text-primary focus:ring-ring',
     otpInputContainer: 'flex gap-2 justify-center',
