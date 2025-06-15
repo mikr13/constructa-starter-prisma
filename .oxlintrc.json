@@ -9,7 +9,32 @@
     "no-debugger": "error",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "warn",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@tanstack/react-start/server",
+            "importNames": ["createAPIFileRoute"],
+            "message": "Use createServerFileRoute + export ServerRoute instead."
+          },
+          {
+            "name": "@tanstack/react-start",
+            "importNames": ["createAPIFileRoute"],
+            "message": "Use createServerFileRoute + export ServerRoute instead."
+          }
+        ],
+        "patterns": ["*createAPIFileRoute*"]
+      }
+    ],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "ExportNamedDeclaration > ExportSpecifier[exported.name='APIRoute']",
+        "message": "Export the route as `ServerRoute`, not `APIRoute`."
+      }
+    ]
   },
   "overrides": [
     {

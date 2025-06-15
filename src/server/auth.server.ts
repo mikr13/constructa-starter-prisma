@@ -3,9 +3,8 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { reactStartCookies } from 'better-auth/react-start';
 import { db } from '~/db/db-config';
 import { sendEmail } from './email';
-import { randomUUID } from "crypto" // new – for CSRF token fallback
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === 'production';
 
 const isEmailVerificationEnabled = process.env.ENABLE_EMAIL_VERIFICATION === 'true';
 
@@ -13,18 +12,18 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
   }),
-	plugins: [
-	reactStartCookies({
-		// 1️⃣  Secure session cookie options
-		cookieName: process.env.SESSION_COOKIE_NAME ?? "ex0_session",
-		cookieOptions: {
-		httpOnly: true,
-		secure: isProd,
-		sameSite: "lax",
-		path: "/",
-		},
-	}),
-	],
+  plugins: [
+    reactStartCookies({
+      // 1️⃣  Secure session cookie options
+      cookieName: process.env.SESSION_COOKIE_NAME ?? 'ex0_session',
+      cookieOptions: {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax',
+        path: '/',
+      },
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: isEmailVerificationEnabled,
@@ -91,6 +90,12 @@ export const auth = betterAuth({
         clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       },
     }),
+  },
+  // 2️⃣  Enable in-memory rate limiting for integration tests and local dev
+  rateLimit: {
+    enabled: true,
+    window: 60, // seconds
+    max: 10, // allow 10 requests per window (tests expect 429 on the 11th)
   },
 });
 

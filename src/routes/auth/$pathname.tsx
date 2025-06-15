@@ -1,6 +1,6 @@
-import { AuthCard } from '@daveyplate/better-auth-ui';
-import { redirect } from '@tanstack/react-router';
+import {  redirect } from '@tanstack/react-router';
 import { z } from 'zod';
+import { CustomAuthCard } from '~/components/auth/custom-auth-card';
 import { getSession } from '~/server/function/auth.server.func';
 
 const searchSchema = z.object({
@@ -30,8 +30,8 @@ function RouteComponent() {
   const callbackURL = redirect || '/dashboard';
 
   return (
-    <main className="flex grow flex-col items-center justify-center gap-4 p-4">
-      <AuthCard pathname={pathname} callbackURL={callbackURL} />
+    <main className="flex grow flex-col items-center justify-center gap-4 p-4 bg-orange-50">
+      <CustomAuthCard pathname={pathname} callbackURL={callbackURL} />
     </main>
   );
 }

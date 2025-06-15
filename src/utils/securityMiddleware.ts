@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextFunction, RequestContext } from "@tanstack/react-start/server";
 import { setCookie, getCookie } from "@tanstack/react-start/server";
 
@@ -43,7 +44,7 @@ export async function securityMiddleware(ctx: RequestContext, next: NextFunction
 
   // Ensure the browser always has a CSRF cookie
   if (!getCookie("csrfToken")) {
-    const token = crypto.randomUUID();
+    const token = randomUUID();
     setCookie("csrfToken", token, {
       path: "/",
       secure: isProd,
