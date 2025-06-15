@@ -14,13 +14,13 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import { PasswordInput } from '~/components/ui/password-input';
+import { PasswordInput } from '@daveyplate/better-auth-ui';
 import { cn } from '~/lib/utils';
 import { formClassNames } from './auth-styles';
 import type { AuthLocalization } from '@daveyplate/better-auth-ui';
 import { useRouter, useSearch } from '@tanstack/react-router';
 import { authClient } from '~/lib/auth-client';
-import { useToast } from '~/hooks/use-toast';
+import { toast } from 'sonner';
 
 export interface ResetPasswordFormProps {
   className?: string;
@@ -30,7 +30,6 @@ export interface ResetPasswordFormProps {
 export function ResetPasswordForm({ className, localization = {} }: ResetPasswordFormProps) {
   const router = useRouter();
   const search = useSearch({ from: '/auth/$pathname' });
-  const { toast } = useToast();
   const tokenChecked = useRef(false);
 
   const formSchema = z
@@ -69,13 +68,11 @@ export function ResetPasswordForm({ className, localization = {} }: ResetPasswor
       router.navigate({
         to: '/auth/sign-in',
       });
-      toast({
-        title: 'Invalid Link',
+      toast.error('Invalid Link', {
         description: 'The password reset link is invalid or expired.',
-        variant: 'destructive',
       });
     }
-  }, [search, router, toast]);
+  }, [search, router]);
 
   async function resetPassword({ newPassword }: z.infer<typeof formSchema>) {
     try {
@@ -87,8 +84,7 @@ export function ResetPasswordForm({ className, localization = {} }: ResetPasswor
         token,
       });
 
-      toast({
-        title: 'Password Reset',
+      toast.success('Password Reset', {
         description: 'Your password has been successfully reset.',
       });
 
@@ -96,10 +92,8 @@ export function ResetPasswordForm({ className, localization = {} }: ResetPasswor
         to: '/auth/sign-in',
       });
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to reset password. The link may be expired.',
-        variant: 'destructive',
       });
       form.reset();
     }
