@@ -11,6 +11,12 @@
 
 > ⚠️ **Work in Progress** - This starter kit is currently under active development. Features and documentation may change frequently.
 
+## Why?
+
+Why start with a boilerplate when AI can generate almost an entire app for us? Because a solid foundation is still the most important part of building full-stack web applications. Even code generators like v0 or bolt.new bootstrap from a starter project. It provides consistency and a reliable point of departure.
+
+On top of that, we can layer in helpful tooling such as AI rules (Cursor Rules, Agents.md, and more) and configuration settings that make it easier for Cursor, Claude, and similar tools to build your app. That’s the whole idea behind this project. It’s still in an early stage and not production-ready, but it’s already mature enough to create some cool things.
+
 
 ## ✨ Features
 
@@ -20,6 +26,7 @@
 - **[TypeScript](https://typescriptlang.org/)** - Full type safety
 - **[TanStack Router](https://tanstack.com/router)** - Type-safe file-based routing
 - **[Better Auth](https://better-auth.com/)** - Modern authentication library
+- **[Better Auth UI](https://github.com/daveyplate/better-auth-ui)** - Pre-built React components for Better Auth
 - **[Drizzle ORM](https://orm.drizzle.team/)** - TypeScript ORM for PostgreSQL
 - **[Oxlint](https://oxc.rs/docs/guide/usage/linter.html)** - Fast JavaScript/TypeScript linter
 - **[Vitest](https://vitest.dev/)** - Lightning fast unit testing framework
@@ -132,6 +139,7 @@ Standard project scripts are available via `pnpm <script-name>`.
 | **TanStack Start** | Full-stack React framework | [Docs](https://tanstack.com/start) |
 | **TanStack Router** | Type-safe file-based routing | [Docs](https://tanstack.com/router) |
 | **Better Auth** | Authentication & user management | [Docs](https://better-auth.com/) |
+| **Better Auth UI** | Pre-built React components for Better Auth | [GitHub](https://github.com/daveyplate/better-auth-ui) |
 | **Drizzle ORM** | Type-safe database ORM | [Docs](https://orm.drizzle.team/) |
 | **PostgreSQL** | Database | [Docs](https://postgresql.org/) |
 | **shadcn/ui** | Component library | [Docs](https://ui.shadcn.com/) |
@@ -400,10 +408,21 @@ pnpm start
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## Contributing
 
-<div align="center">
-  <p>Built with ❤️ using modern React tools</p>
-</div>
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
+## Links
 
+- X/Twitter: [@kregenrek](https://x.com/kregenrek)
+- Bluesky: [@kevinkern.dev](https://bsky.app/profile/kevinkern.dev)
+
+## Courses
+- Learn Cursor AI: [Ultimate Cursor Course](https://www.instructa.ai/en/cursor-ai)
+- Learn to build software with AI: [instructa.ai](https://www.instructa.ai)
+
+## See my other projects:
+
+* [AI Prompts](https://github.com/instructa/ai-prompts/blob/main/README.md) - Curated AI Prompts for Cursor AI, Cline, Windsurf and Github Copilot
+* [codefetch](https://github.com/regenrek/codefetch) - Turn code into Markdown for LLMs with one simple terminal command
+* [aidex](https://github.com/regenrek/aidex) A CLI tool that provides detailed information about AI language models, helping developers choose the right model for their needs.# tool-starter

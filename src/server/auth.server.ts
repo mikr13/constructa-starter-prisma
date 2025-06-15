@@ -3,6 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { reactStartCookies } from 'better-auth/react-start';
 import { db } from '~/db/db-config';
 import { sendEmail } from './email';
+import { magicLink } from 'better-auth/plugins';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -21,6 +22,24 @@ export const auth = betterAuth({
         secure: isProd,
         sameSite: 'lax',
         path: '/',
+      },
+    }),
+    magicLink({
+      async sendMagicLink({ email, url }) {
+        await sendEmail({
+          to: email,
+          subject: 'Sign in to Constructa',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Sign in to Constructa</h2>
+              <p>Click the button below to sign in. This link will expire in 5 minutes.</p>
+              <a href="${url}" style="display:inline-block;padding:12px 24px;background-color:#4F46E5;color:white;text-decoration:none;border-radius:6px;">Sign In</a>
+              <p style="margin-top:20px;color:#666;">If the button above does not work, copy and paste the following link into your browser:</p>
+              <p style="word-break:break-all;color:#666;">${url}</p>
+              <p style="margin-top:30px;color:#999;font-size:14px;">If you did not request this email, you can safely ignore it.</p>
+            </div>
+          `,
+        });
       },
     }),
   ],

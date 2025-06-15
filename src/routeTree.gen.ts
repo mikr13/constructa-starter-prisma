@@ -19,6 +19,10 @@ import { Route as marketingRouteRouteImport } from './routes/(marketing)/route'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as marketingIndexRouteImport } from './routes/(marketing)/index'
 import { Route as AuthPathnameRouteImport } from './routes/auth/$pathname'
+import { Route as DashboardWorkflowRouteRouteImport } from './routes/dashboard/workflow/route'
+import { Route as DashboardImageChatRouteRouteImport } from './routes/dashboard/image-chat/route'
+import { Route as DashboardDocumentsRouteRouteImport } from './routes/dashboard/documents/route'
+import { Route as DashboardChatRouteRouteImport } from './routes/dashboard/chat/route'
 import { Route as DashboardChartsRouteRouteImport } from './routes/dashboard/charts/route'
 
 // Create/Update Routes
@@ -58,6 +62,30 @@ const AuthPathnameRoute = AuthPathnameRouteImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardWorkflowRouteRoute = DashboardWorkflowRouteRouteImport.update({
+  id: '/workflow',
+  path: '/workflow',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardImageChatRouteRoute = DashboardImageChatRouteRouteImport.update({
+  id: '/image-chat',
+  path: '/image-chat',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardDocumentsRouteRoute = DashboardDocumentsRouteRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardChatRouteRoute = DashboardChatRouteRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
 const DashboardChartsRouteRoute = DashboardChartsRouteRouteImport.update({
   id: '/charts',
   path: '/charts',
@@ -94,6 +122,34 @@ declare module '@tanstack/react-router' {
       path: '/charts'
       fullPath: '/dashboard/charts'
       preLoaderRoute: typeof DashboardChartsRouteRouteImport
+      parentRoute: typeof DashboardRouteRouteImport
+    }
+    '/dashboard/chat': {
+      id: '/dashboard/chat'
+      path: '/chat'
+      fullPath: '/dashboard/chat'
+      preLoaderRoute: typeof DashboardChatRouteRouteImport
+      parentRoute: typeof DashboardRouteRouteImport
+    }
+    '/dashboard/documents': {
+      id: '/dashboard/documents'
+      path: '/documents'
+      fullPath: '/dashboard/documents'
+      preLoaderRoute: typeof DashboardDocumentsRouteRouteImport
+      parentRoute: typeof DashboardRouteRouteImport
+    }
+    '/dashboard/image-chat': {
+      id: '/dashboard/image-chat'
+      path: '/image-chat'
+      fullPath: '/dashboard/image-chat'
+      preLoaderRoute: typeof DashboardImageChatRouteRouteImport
+      parentRoute: typeof DashboardRouteRouteImport
+    }
+    '/dashboard/workflow': {
+      id: '/dashboard/workflow'
+      path: '/workflow'
+      fullPath: '/dashboard/workflow'
+      preLoaderRoute: typeof DashboardWorkflowRouteRouteImport
       parentRoute: typeof DashboardRouteRouteImport
     }
     '/auth/$pathname': {
@@ -158,6 +214,42 @@ declare module './routes/dashboard/charts/route' {
     FileRoutesByPath['/dashboard/charts']['fullPath']
   >
 }
+declare module './routes/dashboard/chat/route' {
+  const createFileRoute: CreateFileRoute<
+    '/dashboard/chat',
+    FileRoutesByPath['/dashboard/chat']['parentRoute'],
+    FileRoutesByPath['/dashboard/chat']['id'],
+    FileRoutesByPath['/dashboard/chat']['path'],
+    FileRoutesByPath['/dashboard/chat']['fullPath']
+  >
+}
+declare module './routes/dashboard/documents/route' {
+  const createFileRoute: CreateFileRoute<
+    '/dashboard/documents',
+    FileRoutesByPath['/dashboard/documents']['parentRoute'],
+    FileRoutesByPath['/dashboard/documents']['id'],
+    FileRoutesByPath['/dashboard/documents']['path'],
+    FileRoutesByPath['/dashboard/documents']['fullPath']
+  >
+}
+declare module './routes/dashboard/image-chat/route' {
+  const createFileRoute: CreateFileRoute<
+    '/dashboard/image-chat',
+    FileRoutesByPath['/dashboard/image-chat']['parentRoute'],
+    FileRoutesByPath['/dashboard/image-chat']['id'],
+    FileRoutesByPath['/dashboard/image-chat']['path'],
+    FileRoutesByPath['/dashboard/image-chat']['fullPath']
+  >
+}
+declare module './routes/dashboard/workflow/route' {
+  const createFileRoute: CreateFileRoute<
+    '/dashboard/workflow',
+    FileRoutesByPath['/dashboard/workflow']['parentRoute'],
+    FileRoutesByPath['/dashboard/workflow']['id'],
+    FileRoutesByPath['/dashboard/workflow']['path'],
+    FileRoutesByPath['/dashboard/workflow']['fullPath']
+  >
+}
 declare module './routes/auth/$pathname' {
   const createFileRoute: CreateFileRoute<
     '/auth/$pathname',
@@ -202,11 +294,19 @@ const marketingRouteRouteWithChildren = marketingRouteRoute._addFileChildren(
 
 interface DashboardRouteRouteChildren {
   DashboardChartsRouteRoute: typeof DashboardChartsRouteRoute
+  DashboardChatRouteRoute: typeof DashboardChatRouteRoute
+  DashboardDocumentsRouteRoute: typeof DashboardDocumentsRouteRoute
+  DashboardImageChatRouteRoute: typeof DashboardImageChatRouteRoute
+  DashboardWorkflowRouteRoute: typeof DashboardWorkflowRouteRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardChartsRouteRoute: DashboardChartsRouteRoute,
+  DashboardChatRouteRoute: DashboardChatRouteRoute,
+  DashboardDocumentsRouteRoute: DashboardDocumentsRouteRoute,
+  DashboardImageChatRouteRoute: DashboardImageChatRouteRoute,
+  DashboardWorkflowRouteRoute: DashboardWorkflowRouteRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
@@ -219,6 +319,10 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/docs': typeof DocsRoute
   '/dashboard/charts': typeof DashboardChartsRouteRoute
+  '/dashboard/chat': typeof DashboardChatRouteRoute
+  '/dashboard/documents': typeof DashboardDocumentsRouteRoute
+  '/dashboard/image-chat': typeof DashboardImageChatRouteRoute
+  '/dashboard/workflow': typeof DashboardWorkflowRouteRoute
   '/auth/$pathname': typeof AuthPathnameRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -226,6 +330,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/docs': typeof DocsRoute
   '/dashboard/charts': typeof DashboardChartsRouteRoute
+  '/dashboard/chat': typeof DashboardChatRouteRoute
+  '/dashboard/documents': typeof DashboardDocumentsRouteRoute
+  '/dashboard/image-chat': typeof DashboardImageChatRouteRoute
+  '/dashboard/workflow': typeof DashboardWorkflowRouteRoute
   '/auth/$pathname': typeof AuthPathnameRoute
   '/': typeof marketingIndexRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -237,6 +345,10 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/docs': typeof DocsRoute
   '/dashboard/charts': typeof DashboardChartsRouteRoute
+  '/dashboard/chat': typeof DashboardChatRouteRoute
+  '/dashboard/documents': typeof DashboardDocumentsRouteRoute
+  '/dashboard/image-chat': typeof DashboardImageChatRouteRoute
+  '/dashboard/workflow': typeof DashboardWorkflowRouteRoute
   '/auth/$pathname': typeof AuthPathnameRoute
   '/(marketing)/': typeof marketingIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -249,16 +361,33 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/docs'
     | '/dashboard/charts'
+    | '/dashboard/chat'
+    | '/dashboard/documents'
+    | '/dashboard/image-chat'
+    | '/dashboard/workflow'
     | '/auth/$pathname'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/docs' | '/dashboard/charts' | '/auth/$pathname' | '/' | '/dashboard'
+  to:
+    | '/docs'
+    | '/dashboard/charts'
+    | '/dashboard/chat'
+    | '/dashboard/documents'
+    | '/dashboard/image-chat'
+    | '/dashboard/workflow'
+    | '/auth/$pathname'
+    | '/'
+    | '/dashboard'
   id:
     | '__root__'
     | '/(marketing)'
     | '/dashboard'
     | '/docs'
     | '/dashboard/charts'
+    | '/dashboard/chat'
+    | '/dashboard/documents'
+    | '/dashboard/image-chat'
+    | '/dashboard/workflow'
     | '/auth/$pathname'
     | '/(marketing)/'
     | '/dashboard/'
@@ -305,6 +434,10 @@ export const routeTree = rootRoute
       "filePath": "dashboard/route.tsx",
       "children": [
         "/dashboard/charts",
+        "/dashboard/chat",
+        "/dashboard/documents",
+        "/dashboard/image-chat",
+        "/dashboard/workflow",
         "/dashboard/"
       ]
     },
@@ -313,6 +446,22 @@ export const routeTree = rootRoute
     },
     "/dashboard/charts": {
       "filePath": "dashboard/charts/route.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/chat": {
+      "filePath": "dashboard/chat/route.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/documents": {
+      "filePath": "dashboard/documents/route.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/image-chat": {
+      "filePath": "dashboard/image-chat/route.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/workflow": {
+      "filePath": "dashboard/workflow/route.tsx",
       "parent": "/dashboard"
     },
     "/auth/$pathname": {
