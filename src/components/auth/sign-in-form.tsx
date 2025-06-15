@@ -265,9 +265,9 @@ export function SignInForm({
 
       {/* Divider */}
       <div className="flex items-center gap-4">
-        <hr className="flex-1 border-gray-200" />
-        <span className="text-sm text-gray-400">or</span>
-        <hr className="flex-1 border-gray-200" />
+        <hr className="flex-1 border" />
+        <span className="text-sm text-muted-foreground">or</span>
+        <hr className="flex-1 border" />
       </div>
 
       {/* Form */}
@@ -370,7 +370,7 @@ export function SignInForm({
       </Form>
 
       {/* Auth mode toggle */}
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm text-muted-foreground">
         {authMode === 'magic-link' ? (
           <>
             We'll email you a link for a password-free sign in. Or{' '}
@@ -399,7 +399,7 @@ export function SignInForm({
       </p>
 
       {/* Sign up link */}
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm text-muted-foreground">
         Don't have an account?{' '}
         <Link
           to={
@@ -412,7 +412,7 @@ export function SignInForm({
       </p>
 
       {/* Terms */}
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-muted-foreground">
         By signing in, you agree to our{' '}
         <Link to="/terms" as any className={formClassNames.outlineButton}>
           Terms of Service

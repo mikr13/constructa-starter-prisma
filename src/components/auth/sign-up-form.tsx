@@ -351,9 +351,9 @@ export function SignUpForm({
 
       {/* Divider */}
       <div className="flex items-center gap-4">
-        <hr className="flex-1 border-gray-200" />
-        <span className="text-sm text-gray-400">or</span>
-        <hr className="flex-1 border-gray-200" />
+        <hr className="flex-1 border" />
+        <span className="text-sm text-muted-foreground">or</span>
+        <hr className="flex-1 border" />
       </div>
 
       {/* Form */}
@@ -562,7 +562,7 @@ export function SignUpForm({
       </Form>
 
       {/* Sign in link */}
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}
         <Link
           to={
@@ -575,7 +575,7 @@ export function SignUpForm({
       </p>
 
       {/* Terms */}
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-muted-foreground">
         By signing up, you agree to our{' '}
         <Link to="/terms" as any className={formClassNames.outlineButton}>
           Terms of Service

@@ -1,38 +1,37 @@
 import type { AuthCardProps, AuthLocalization } from '@daveyplate/better-auth-ui';
 
 export const authCardClassNames: AuthCardProps['classNames'] = {
-  base: 'w-full max-w-md mx-auto bg-white rounded-xl shadow-lg border border-orange-100',
+  base: 'w-full max-w-md mx-auto bg-background rounded-xl shadow-lg border',
   header: 'text-center pb-2',
-  title:
-    'text-2xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent',
-  description: 'text-sm text-gray-600 mt-2',
+  title: 'text-2xl font-bold text-foreground',
+  description: 'text-sm text-muted-foreground mt-2',
   content: 'px-8 pb-8',
   footer: 'text-center space-y-3',
   footerLink:
-    'text-orange-600 font-medium hover:text-orange-700 underline decoration-orange-200 underline-offset-2',
-  separator: 'relative text-center my-6 text-gray-400',
+    'text-primary font-medium hover:text-primary/80 underline decoration-primary/30 underline-offset-2',
+  separator: 'relative text-center my-6 text-muted-foreground',
   form: {
     base: 'space-y-4',
     description: 'hidden',
-    label: 'block text-sm font-medium text-gray-700 mb-1.5',
+    label: 'block text-sm font-medium text-foreground mb-1.5',
     input:
-      'w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent placeholder-gray-400 transition-all hover:border-gray-300',
-    error: 'text-sm text-red-500 mt-1',
+      'w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background placeholder-muted-foreground transition-all hover:border-muted-foreground/50 bg-background text-foreground',
+    error: 'text-sm text-destructive mt-1',
     primaryButton:
-      'w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-pink-600 transition-all transform hover:scale-[1.02] shadow-md',
+      'w-full py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-all transform hover:scale-[1.02] shadow-md',
     secondaryButton:
-      'w-full py-2.5 px-4 border border-orange-200 text-orange-700 rounded-lg font-medium hover:bg-orange-50 hover:border-orange-300 transition-colors',
+      'w-full py-2.5 px-4 border bg-background text-foreground rounded-lg font-medium hover:bg-accent hover:text-accent-foreground transition-colors',
     outlineButton:
-      'text-orange-600 font-medium hover:text-orange-700 underline decoration-orange-200 underline-offset-2',
+      'text-primary font-medium hover:text-primary/80 underline decoration-primary/30 underline-offset-2',
     forgotPasswordLink:
-      'text-orange-600 font-medium hover:text-orange-700 underline decoration-orange-200 underline-offset-2',
+      'text-primary font-medium hover:text-primary/80 underline decoration-primary/30 underline-offset-2',
     providerButton:
-      'w-full py-2.5 px-4 border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 shadow-sm',
+      'w-full py-2.5 px-4 border rounded-lg font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-all flex items-center justify-center gap-2 shadow-sm bg-background',
     icon: 'w-5 h-5',
-    checkbox: 'rounded border-gray-300 text-orange-500 focus:ring-orange-400',
+    checkbox: 'rounded border-input text-primary focus:ring-ring',
     otpInputContainer: 'flex gap-2 justify-center',
     otpInput:
-      'w-12 h-12 text-center border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent hover:border-gray-300 transition-all',
+      'w-12 h-12 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background hover:border-muted-foreground/50 transition-all bg-background text-foreground',
     qrCode: 'mx-auto',
     button: 'inline-flex items-center justify-center',
   },
