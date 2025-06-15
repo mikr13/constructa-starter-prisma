@@ -6,10 +6,52 @@
 
 <div align="center">
   <h2>AI-First SAAS Starter Kit</h2>
-  <p>Optimized for coding with AI assistants • Powered by instructa.ai</p>
+  <p>Optimized for coding with AI assistants • Powered by <a href="https://instructa.ai">instructa.ai</a></p>
 </div>
 
 > ⚠️ **Work in Progress** - This starter kit is currently under active development. Features and documentation may change frequently.
+
+
+## ✨ Features
+
+- 🔐 **Authentication** - Login/signup with email, GitHub & Google OAuth, password reset
+- 📊 **Dashboard Templates** - AI Chat, Workflows, Documents, Image Chat, Charts (`/dashboard`)
+- 🎨 **Marketing Pages** - Modern landing page with responsive design & dark/light mode
+- 💾 **Database** - Local PostgreSQL with Docker, Supabase ready, Drizzle ORM
+- 🤖 **AI-Optimized** - Cursor rules, consistent patterns, TypeScript for better AI coding
+- 🛠️ **Developer Tools** - Hot reload, path aliases, Oxlint, Vitest, custom CLI
+
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Download & Install **[Node.js](https://nodejs.org/en)** 18+ 
+- Download & Install **[Docker](https://www.docker.com/)** Desktop
+- **pnpm** (recommended package manager)
+
+### Installation
+
+```bash
+# Clone the repository
+npx gitpick git@github.com:instructa/constructa-starter.git my-app
+cd my-app
+
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+```
+
+### Setup
+
+```
+# Create env file
+cp .env.example .env
+
+# Use CLI to kickstart your project
+pnpm ex0 init
+```
 
 ## Why?
 
@@ -18,11 +60,11 @@ Why start with a boilerplate when AI can generate almost an entire app for us? B
 On top of that, we can layer in helpful tooling such as AI rules (Cursor Rules, Agents.md, and more) and configuration settings that make it easier for Cursor, Claude, and similar tools to build your app. That’s the whole idea behind this project. It’s still in an early stage and not production-ready, but it’s already mature enough to create some cool things.
 
 
-## ✨ Features
+## Tech Stack
 
 - **[TanStack Start](https://tanstack.com/start)** - Modern full-stack React framework
 - **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful, accessible component library
-- **[Tailwind CSS](https://tailwindcss.com/)** - Modern utility-first CSS framework
+- **[Tailwind CSS v4](https://tailwindcss.com/)** - Modern utility-first CSS framework
 - **[TypeScript](https://typescriptlang.org/)** - Full type safety
 - **[TanStack Router](https://tanstack.com/router)** - Type-safe file-based routing
 - **[Better Auth](https://better-auth.com/)** - Modern authentication library
@@ -32,79 +74,11 @@ On top of that, we can layer in helpful tooling such as AI rules (Cursor Rules, 
 - **[Vitest](https://vitest.dev/)** - Lightning fast unit testing framework
 - **Cursor Rules** - Pre-configured AI coding assistant rules for optimal development experience
 
-## 🚀 Quick Start
-
-### Prerequisites
-- **Node.js** 18+ 
-- **pnpm** (recommended package manager)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd constructa-starter
-
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
-```
-
-### Available Scripts
-
-```bash
-# Development
-pnpm dev          # Start development server
-pnpm build        # Build for production
-pnpm start        # Start production server
-
-# Database
-pnpm db:generate  # Generate database migrations
-pnpm db:migrate   # Run database migrations
-pnpm db:push      # Push schema changes to database
-pnpm db:studio    # Open Drizzle Studio
-
-# Code Quality
-pnpm lint         # Check code with Oxlint
-pnpm lint:fix     # Fix linting issues
-pnpm typecheck    # Run TypeScript type checking
-
-# Testing
-pnpm test         # Run tests with Vitest
-```
 
 ### Project CLI (`pnpm ex0`)
 
 This project includes a custom CLI tool for common tasks. Run it using `pnpm ex0 <command>`.
 
-#### Project Structure
-
-```
-src/
-├── components/
-│   ├── auth/            # Authentication components
-│   ├── ui/              # shadcn/ui components
-│   └── ...              # Other reusable components
-├── routes/              # File-based routing
-│   ├── __root.tsx       # Root layout
-│   ├── index.tsx        # Home page
-│   ├── (auth)/          # Auth routes (sign-in, sign-up)
-│   ├── (marketing)/     # Marketing pages
-│   └── api/             # API routes
-├── lib/                 # Utility libraries
-├── hooks/               # Custom React hooks
-├── styles/              # Global styles
-└── utils/               # Utility functions
-
-server/
-├── auth.ts              # Better Auth configuration
-└── db/                  # Database configuration and schemas
-
-drizzle/                 # Database migrations
-tests/                   # Test files
-```
 
 | Command    | Description                                                                | Args                 |
 | :--------- | :------------------------------------------------------------------------- | :------------------- |
@@ -115,39 +89,6 @@ tests/                   # Test files
 | `recreate` | Recreate Docker containers (use <code>--wipeVolume</code> to also delete the data volume) | `--wipeVolume` |
 | `testdata` | Create or delete seed test data in the database                            | `--create`, `--delete` |
 | `deploy`   | [TODO] Deploy the application                                              |                      |
-
-### npm/pnpm Scripts
-
-Standard project scripts are available via `pnpm <script-name>`.
-
-| Script             | Description                                      | Underlying Command                                                                       |
-| :----------------- | :----------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| `dev`              | Start development server                         | `vite`                                                                                   |
-| `build`            | Build the project                                | `vite build`                                                                             |
-| `start`            | Start production server                          | `vite preview`                                                                           |
-| `test`             | Run tests                                        | `vitest`                                                                                 |
-| `db:pull`          | Pull database schema using Drizzle Kit           | `npx drizzle-kit pull`                                                                   |
-| `db:generate`      | Generate Drizzle migrations/schema changes       | `npx drizzle-kit generate`                                                               |
-| `db:migrate`       | Apply Drizzle migrations                         | `npx drizzle-kit migrate`                                                                |
-| `auth:init`        | Generate Better Auth schema                      | `npx -y @better-auth/cli@latest generate --config src/server/auth.ts --output src/server/db/auth.schema.ts` |
-| `ex0`              | Run the custom project CLI                       | `tsx cli/index.ts`                                                                       |
-
-### Tech Stack Reference
-
-| Technology | Purpose | Documentation |
-|------------|---------|---------------|
-| **TanStack Start** | Full-stack React framework | [Docs](https://tanstack.com/start) |
-| **TanStack Router** | Type-safe file-based routing | [Docs](https://tanstack.com/router) |
-| **Better Auth** | Authentication & user management | [Docs](https://better-auth.com/) |
-| **Better Auth UI** | Pre-built React components for Better Auth | [GitHub](https://github.com/daveyplate/better-auth-ui) |
-| **Drizzle ORM** | Type-safe database ORM | [Docs](https://orm.drizzle.team/) |
-| **PostgreSQL** | Database | [Docs](https://postgresql.org/) |
-| **shadcn/ui** | Component library | [Docs](https://ui.shadcn.com/) |
-| **Tailwind CSS** | Utility-first CSS framework | [Docs](https://tailwindcss.com/) |
-| **TypeScript** | Type safety | [Docs](https://typescriptlang.org/) |
-| **Oxlint** | Fast JavaScript/TypeScript linter | [Docs](https://oxc.rs/) |
-| **Vitest** | Unit testing framework | [Docs](https://vitest.dev/) |
-| **Resend** | Email delivery service | [Docs](https://resend.com/) |
 
 ## 🔧 Configuration
 
@@ -361,48 +302,6 @@ The application supports OAuth authentication with GitHub and Google. Here's how
 
 Once configured, users will see GitHub and Google sign-in options on the authentication pages. The OAuth providers are conditionally enabled based on the presence of their respective environment variables.
 
-### Adding shadcn/ui Components
-```bash
-# Add new components
-npx shadcn@latest add button
-npx shadcn@latest add card
-npx shadcn@latest add input
-```
-
-### Database
-- **PostgreSQL** with Drizzle ORM for type-safe database operations
-- **Docker Compose** setup included for local development
-- **Drizzle Studio** for database visualization and management
-
-### Authentication
-- **Better Auth** provides secure authentication with email/password and OAuth
-- **Protected routes** with automatic redirects
-- **Email verification** and password reset functionality
-- **GitHub & Google OAuth** support
-
-### Styling & Components
-- **Tailwind CSS** for utility-first styling
-- **shadcn/ui** for beautiful, accessible components
-- **CSS custom properties** for theming support
-- **Dark/light mode** toggle included
-
-### Development Tools
-- **Oxlint** for fast linting
-- **TypeScript** for type safety
-- **Vitest** for testing
-- **Path aliases**: `~` resolves to `src/` directory
-
-## 🚀 Deployment
-
-### Build for Production
-```bash
-pnpm build
-```
-
-### Start Production Server
-```bash
-pnpm start
-```
 
 ## 📄 License
 
@@ -417,7 +316,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 - X/Twitter: [@kregenrek](https://x.com/kregenrek)
 - Bluesky: [@kevinkern.dev](https://bsky.app/profile/kevinkern.dev)
 
-## Courses
+## AI Academy & Courses
 - Learn Cursor AI: [Ultimate Cursor Course](https://www.instructa.ai/en/cursor-ai)
 - Learn to build software with AI: [instructa.ai](https://www.instructa.ai)
 
