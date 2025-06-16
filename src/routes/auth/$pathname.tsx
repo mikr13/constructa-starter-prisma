@@ -14,8 +14,6 @@ import {
 } from '~/components/auth/auth-styles';
 import { authClient } from '~/lib/auth-client';
 import { Loader2 } from 'lucide-react';
-import { useEffect } from 'react';
-import { useRouter } from '@tanstack/react-router';
 
 const searchSchema = z.object({
   redirect: z.string().optional(),
@@ -27,7 +25,20 @@ export const Route = createFileRoute({
   validateSearch: searchSchema,
   component: RouteComponent,
   beforeLoad: async ({ params }: { params: { pathname: string } }) => {
-    // Only check session for sign-in and sign-up routes
+    // Handle sign‑out entirely in the route guard — no React effect needed
+    if (params.pathname === 'sign-out') {
+      if (typeof window !== 'undefined') {
+        try {
+          await authClient.signOut();
+        } catch (error) {
+          console.error('Failed to sign out:', error);
+          // Continue to redirect even if sign‑out fails
+        }
+      }
+      throw redirect({ to: '/auth/sign-in' });
+    }
+
+    // Only check session for sign‑in and sign‑up routes
     if (params.pathname === 'sign-in' || params.pathname === 'sign-up') {
       const session = await getSession();
       if (session?.user) {
@@ -44,30 +55,8 @@ function RouteComponent() {
   const { pathname } = Route.useParams();
   const { redirect, token, message } = Route.useSearch();
   const redirectTo = redirect || '/dashboard';
-  const router = useRouter();
 
-  // Handle sign-out
-  useEffect(() => {
-    if (pathname === 'sign-out') {
-      const handleSignOut = async () => {
-        try {
-          await authClient.signOut();
-          // Redirect to sign-in page after logout
-          router.navigate({
-            to: '/auth/sign-in',
-          });
-        } catch (error) {
-          console.error('Failed to sign out:', error);
-          // Still redirect even if there's an error
-          router.navigate({
-            to: '/auth/sign-in',
-          });
-        }
-      };
-
-      handleSignOut();
-    }
-  }, [pathname, router]);
+  // (sign‑out handled in beforeLoad; no useEffect needed)
 
   const renderAuthForm = () => {
     switch (pathname) {

@@ -23,6 +23,22 @@ async function makeAuthRequest(
   const baseUrl = process.env.TEST_BASE_URL || 'http://localhost:3000';
   const method = options.method || 'POST';
 
+  // Better-auth uses a single endpoint with different paths
+  let url = `${baseUrl}/api/auth/${endpoint}`;
+
+  // For email operations, better-auth expects specific endpoints
+  if (endpoint === 'sign-up/email') {
+    url = `${baseUrl}/api/auth/signup`;
+  } else if (endpoint === 'sign-in/email') {
+    url = `${baseUrl}/api/auth/signin`;
+  } else if (endpoint === 'forget-password') {
+    url = `${baseUrl}/api/auth/forgot-password`;
+  } else if (endpoint === 'session') {
+    url = `${baseUrl}/api/auth/session`;
+  } else if (endpoint.startsWith('verify-email')) {
+    url = `${baseUrl}/api/auth/${endpoint}`;
+  }
+
   // Build fetch options - only include body for non-GET methods
   const fetchOptions: RequestInit = {
     method,
@@ -38,7 +54,7 @@ async function makeAuthRequest(
     fetchOptions.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(`${baseUrl}/api/auth/${endpoint}`, fetchOptions);
+  const response = await fetch(url, fetchOptions);
 
   const text = await response.text();
   let data = null;
