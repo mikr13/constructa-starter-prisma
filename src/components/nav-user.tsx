@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback } from 'react';
-import Home from '~icons/ri/home-line';
 import RiGithubFill from '~icons/ri/github-fill';
 import RiMore from '~icons/ri/more-line';
 import RiListSettingsLine from '~icons/ri/list-settings-line';
@@ -116,17 +115,9 @@ export function NavUser({
                   <RiUser />
                   Account settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => openSettingsDialog('general')}>
-                  <Home />
-                  Workspace
-                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => openSettingsDialog('preferences')}>
                   <RiListSettingsLine />
                   Preferences
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => openSettingsDialog('github')}>
-                  <RiGithubFill />
-                  GitHub integration
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

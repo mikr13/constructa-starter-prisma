@@ -6,22 +6,10 @@ export const settingsNavItems = [
     icon: 'ri:user-settings-line',
   },
   {
-    section: 'general',
-    label: 'General',
-    description: 'Project preferences and privacy controls.',
-    icon: 'ri:settings-4-line',
-  },
-  {
     section: 'preferences',
     label: 'Preferences',
     description: 'Interface and theme settings.',
     icon: 'ri:list-settings-line',
-  },
-  {
-    section: 'github',
-    label: 'GitHub',
-    description: 'Connect your project to GitHub for 2-way sync.',
-    icon: 'ri:github-fill',
   },
 ] as const;
 

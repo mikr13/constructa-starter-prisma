@@ -7,7 +7,6 @@ export { SettingsContent } from './SettingsContent';
 export { SettingsCard } from './shared/SettingsCard';
 
 // Section components
-export { GeneralSettings } from './sections/GeneralSettings';
 export { PlaceholderSettings } from './sections/PlaceholderSettings';
 export { PreferencesSettings } from './sections/PreferencesSettings';
 
