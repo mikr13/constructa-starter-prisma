@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { Image, Send, Upload, X } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
@@ -6,7 +7,7 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import { useState } from 'react';
 import { } from '@tanstack/react-router';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/image-chat')({
   component: RouteComponent,
 });
 
