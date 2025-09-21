@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ex0
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - ex0-data:/var/lib/postgresql/data
 
@@ -17,10 +17,25 @@ services:
     container_name: ex0-mailhog
     restart: unless-stopped
     ports:
-      - "1025:1025"  # SMTP server
-      - "8025:8025"  # Web UI
+      - '1025:1025' # SMTP server
+      - '8025:8025' # Web UI
     environment:
       MH_STORAGE: memory
 
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: ex0-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - '9000:9000' # S3 API (use this in your app)
+      - '9001:9001' # Web UI
+    volumes:
+      - ex0-minio-data:/data
+
 volumes:
   ex0-data:
+  ex0-minio-data:
