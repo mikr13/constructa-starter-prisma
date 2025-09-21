@@ -1,5 +1,5 @@
 import { AuthView, authLocalization } from '@daveyplate/better-auth-ui';
-import { redirect, createFileRoute, createFileRoute } from '@tanstack/react-router';
+import { redirect, createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { getSession } from '~/server/function/auth.server.func';
 import { authLocalizationOverrides, authViewClassNames } from '~/components/auth/auth-styles';
