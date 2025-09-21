@@ -1,4 +1,5 @@
 import type {
+  AccountViewProps,
   AuthFormClassNames,
   AuthLocalization,
   AuthViewClassNames,
@@ -73,3 +74,29 @@ export const authContainerClassName = authViewClassNames.base!;
 export const authHeaderClassName = authViewClassNames.header;
 export const authTitleClassName = authViewClassNames.title;
 export const authDescriptionClassName = authViewClassNames.description;
+
+const accountCardBase =
+  'border border-border/60 bg-background/90 backdrop-blur rounded-xl shadow-sm';
+
+export const accountViewClassNames: NonNullable<AccountViewProps['classNames']> = {
+  base: 'flex-1',
+  cards: 'flex flex-col gap-4 md:gap-6',
+  card: {
+    base: accountCardBase,
+    header: 'px-4 py-4 border-b border-border/70',
+    title: 'text-base font-semibold',
+    description: 'text-sm text-muted-foreground',
+    content: 'px-4',
+    footer: 'px-4 pb-4',
+    primaryButton:
+      'inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90',
+    secondaryButton:
+      'inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium transition hover:bg-muted',
+    outlineButton:
+      'inline-flex items-center justify-center text-sm font-medium text-primary underline-offset-4 hover:underline',
+    button:
+      'inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm font-medium transition hover:bg-muted',
+    error: 'text-sm text-destructive',
+    instructions: 'text-sm text-muted-foreground',
+  },
+};

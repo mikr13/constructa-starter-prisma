@@ -1,19 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AccountView } from '@daveyplate/better-auth-ui';
 import { useRouterState } from '@tanstack/react-router';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from '~/components/ui/dialog';
-import { logger } from '~/lib/logger';
-import { useSession } from '~/lib/auth-client';
-import {
-  defaultSettingsSection,
-  isSettingsSection,
-  type SettingsSection,
-} from '../settings-nav';
+import { useSession } from '~/hooks/auth-hooks';
+import { defaultSettingsSection, isSettingsSection, type SettingsSection } from './settings-nav';
 import {
   SettingsLayout,
   GeneralSettings,
@@ -27,7 +22,8 @@ import {
   useGithubIntegrationStore,
   normalizeProjectKey,
   type GithubIntegrationOrganization,
-} from '~/lib/stores/github-integration.store';
+} from '~/stores/github-integration.store';
+import { accountViewClassNames } from '~/components/auth/auth-styles';
 
 interface GithubOrgOption {
   readonly id: string;
@@ -71,10 +67,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
   const location = useRouterState({ select: (state) => state.location });
   const search = location.search as Record<string, unknown>;
-  const activeSection: SettingsSection = (() => {
-    const value = (search as { settings?: unknown }).settings;
-    return isSettingsSection(value) ? value : defaultSettingsSection;
-  })();
+  const rawSettings = (search as { settings?: unknown }).settings;
+  const activeSection: SettingsSection = isSettingsSection(rawSettings)
+    ? rawSettings
+    : defaultSettingsSection;
 
   const githubStatus = projectState.status;
   const githubLoading = githubStatus === 'loading';
@@ -197,7 +193,9 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
       if (!authorizeRes.ok) {
         const body = await authorizeRes.json().catch(() => ({}));
         const message =
-          typeof (body as any)?.error === 'string' ? (body as any).error : 'Failed to start GitHub OAuth';
+          typeof (body as any)?.error === 'string'
+            ? (body as any).error
+            : 'Failed to start GitHub OAuth';
         throw new Error(message);
       }
       const body = (await authorizeRes.json()) as { url?: string };
@@ -245,6 +243,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
   const renderContent = () => {
     switch (activeSection) {
+      case 'account':
+        return (
+          <AccountView hideNav classNames={accountViewClassNames} />
+        );
       case 'general':
         return <GeneralSettings projectId={projectId} />;
       case 'preferences':
@@ -295,9 +297,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
       <DialogContent className="max-w-[95vw] md:max-w-[1100px] w-[95dvw] max-h-[90vh] p-0 overflow-hidden">
         <DialogTitle className="sr-only">Settings</DialogTitle>
         <DialogDescription className="sr-only">Project and chat settings</DialogDescription>
-        <SettingsLayout activeSection={activeSection}>
-          {renderContent()}
-        </SettingsLayout>
+        <SettingsLayout activeSection={activeSection}>{renderContent()}</SettingsLayout>
       </DialogContent>
     </Dialog>
   );

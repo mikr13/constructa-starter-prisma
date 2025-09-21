@@ -9,9 +9,10 @@ import {
 } from '~/components/ui/sidebar';
 import { SettingsNavigation } from './SettingsNavigation';
 import { SettingsContent } from './SettingsContent';
+import type { SettingsSection } from './settings-nav';
 
 interface SettingsLayoutProps {
-  readonly activeSection: string;
+  readonly activeSection: SettingsSection;
   readonly children: ReactNode;
 }
 

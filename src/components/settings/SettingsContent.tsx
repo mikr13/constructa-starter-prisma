@@ -7,10 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '~/components/ui/breadcrumb';
-import {
-  settingsNavItems,
-  type SettingsSection,
-} from '../settings-nav';
+import { settingsNavItems, type SettingsSection } from './settings-nav';
 
 interface SettingsContentProps {
   readonly activeSection: SettingsSection;
@@ -31,17 +28,13 @@ export function SettingsContent({ activeSection, children }: SettingsContentProp
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>
-                  {activeItem?.label || 'General'}
-                </BreadcrumbPage>
+                <BreadcrumbPage>{activeItem?.label || 'General'}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
-        {children}
-      </div>
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">{children}</div>
     </main>
   );
 }

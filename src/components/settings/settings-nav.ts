@@ -1,5 +1,11 @@
 export const settingsNavItems = [
   {
+    section: 'account',
+    label: 'Account',
+    description: 'Manage profile details and security credentials.',
+    icon: 'ri:user-settings-line',
+  },
+  {
     section: 'general',
     label: 'General',
     description: 'Project preferences and privacy controls.',

@@ -37,8 +37,11 @@ export function GithubRepoBrowser({
         <h3 className="px-1 text-sm font-medium text-gray-900 dark:text-gray-100">Repositories</h3>
         <SettingsCard
           icon={<Search className="h-4 w-4" />}
+          title="GitHub Repositories"
           description="Sign in to view and manage GitHub repositories for this project."
-        />
+        >
+          <div />
+        </SettingsCard>
       </div>
     );
   }

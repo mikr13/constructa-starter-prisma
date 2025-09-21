@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '~/lib/utils';
 import { SidebarMenuButton, SidebarMenuItem } from '~/components/ui/sidebar';
-import RiSettings4Line from '~icons/ri/settings-4-line';
 import RiGithubFill from '~icons/ri/github-fill';
 import RiListSettingsLine from '~icons/ri/list-settings-line';
+import RiSettings4Line from '~icons/ri/settings-4-line';
+import RiUserSettingsLine from '~icons/ri/user-settings-line';
 import { settingsNavItems, type SettingsNavItem, type SettingsSection } from './settings-nav';
 
 interface SettingsNavigationProps {
@@ -35,6 +36,7 @@ export function SettingsNavigation({ activeSection }: SettingsNavigationProps) {
             )}
           >
             <div className="flex items-center gap-2">
+              {item.icon === 'ri:user-settings-line' && <RiUserSettingsLine className="h-4 w-4" />}
               {item.icon === 'ri:settings-4-line' && <RiSettings4Line className="h-4 w-4" />}
               {item.icon === 'ri:github-fill' && <RiGithubFill className="h-4 w-4" />}
               {item.icon === 'ri:list-settings-line' && <RiListSettingsLine className="h-4 w-4" />}
