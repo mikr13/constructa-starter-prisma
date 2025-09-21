@@ -1,6 +1,6 @@
-;
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/docs')({
 	component: DocsPage,
 });
 
@@ -40,5 +40,5 @@ function DocsPage() {
 				</pre>
 			</div>
 		</div>
-	);
+	)
 }

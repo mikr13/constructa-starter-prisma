@@ -1,6 +1,11 @@
-import { BellDot, CreditCard, EllipsisVertical, LogOut, UserCircle } from 'lucide-react';
+'use client';
 
-import { useRouter } from '@tanstack/react-router';
+import Home from '~icons/ri/home-line';
+import RiMore from '~icons/ri/more-line';
+import RiLogoutBox from '~icons/ri/logout-box-line';
+import RiNotification from '~icons/ri/notification-line';
+import RiUser from '~icons/ri/user-line';
+
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import {
   DropdownMenu,
@@ -28,14 +33,6 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    router.navigate({
-      to: '/auth/$pathname',
-      params: { pathname: 'sign-out' },
-    });
-  };
 
   return (
     <SidebarMenu>
@@ -54,7 +51,7 @@ export function NavUser({
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="text-muted-foreground truncate text-xs">{user.email}</span>
               </div>
-              <EllipsisVertical className="ml-auto size-4" />
+              <RiMore className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -78,21 +75,21 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <UserCircle />
+                <RiUser />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
+                <Home />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <BellDot />
+                <RiNotification />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut />
+            <DropdownMenuItem>
+              <RiLogoutBox />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

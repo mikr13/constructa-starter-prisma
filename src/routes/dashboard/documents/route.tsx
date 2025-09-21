@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { FileText, Download, Trash2, Upload, Search, Eye, Filter } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
@@ -21,7 +22,7 @@ import {
 import { useState } from 'react';
 import { } from '@tanstack/react-router';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/documents')({
   component: RouteComponent,
 });
 
