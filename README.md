@@ -18,7 +18,7 @@
 - 📊 **Dashboard Templates** - AI Chat, Workflows, Documents, Image Chat, Charts (`/dashboard`)
 - 🎨 **Marketing Pages** - Modern landing page with responsive design & dark/light mode
 - 💾 **Database** - Local PostgreSQL with Docker, Supabase ready, Drizzle ORM
-- 🤖 **AI-Optimized** - Cursor rules, consistent patterns, TypeScript for better AI coding
+- 🤖 **AI-Optimized** - Cursor rules, .ruler auto-generated agent rules, AGENTS.md format for Claude Code/Codex/Cursor, consistent patterns, TypeScript for better AI coding
 - 🛠️ **Developer Tools** - Hot reload, path aliases, Oxlint, Vitest, custom CLI
 - 🐛 **Frontend Error Logging** - Browser-Echo integration for automatic error capture and structured logging
 
@@ -74,6 +74,8 @@ On top of that, we can layer in helpful tooling such as AI rules (Cursor Rules, 
 - **[Oxlint](https://oxc.rs/docs/guide/usage/linter.html)** - Fast JavaScript/TypeScript linter
 - **[Vitest](https://vitest.dev/)** - Lightning fast unit testing framework
 - **Cursor Rules** - Pre-configured AI coding assistant rules for optimal development experience
+- **.ruler** - Auto-generates agent rules for consistent AI-assisted development
+- **AGENTS.md** - Standardized agent rules format compatible with Claude Code, Codex, Cursor, and other AI coding assistants
 
 
 ### Project CLI (`pnpm ex0`)

@@ -18,8 +18,6 @@
     "lint:fix": "oxlint --fix",
     "auth:init": "npx -y @better-auth/cli@latest generate --config src/server/auth.ts --output src/server/db/auth.schema.ts",
     "ex0": "tsx cli/index.ts",
-    "rules:setup": "./scripts/setup-ai-rules.sh",
-    "rules:sync": "./scripts/setup-ai-rules.sh",
     "rules:apply": "ruler apply --nested"
   },
   "dependencies": {
