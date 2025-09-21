@@ -20,6 +20,7 @@
 - 💾 **Database** - Local PostgreSQL with Docker, Supabase ready, Drizzle ORM
 - 🤖 **AI-Optimized** - Cursor rules, consistent patterns, TypeScript for better AI coding
 - 🛠️ **Developer Tools** - Hot reload, path aliases, Oxlint, Vitest, custom CLI
+- 🐛 **Frontend Error Logging** - Browser-Echo integration for automatic error capture and structured logging
 
 
 ## 🚀 Quick Start

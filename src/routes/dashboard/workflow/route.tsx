@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { Workflow,
   Plus,
   Play,
@@ -16,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Progress } from '~/components/ui/progress';
 import { } from '@tanstack/react-router';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/workflow')({
   component: RouteComponent,
 });
 

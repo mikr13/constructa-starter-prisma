@@ -1,7 +1,8 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { DollarSign, LayoutDashboard, TrendingUp, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/charts')({
   component: RouteComponent,
 });
 
