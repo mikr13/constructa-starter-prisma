@@ -10,6 +10,10 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  ssr: {
+    // Ensure Node-y Mastra stays external to avoid bundling issues
+    noExternal: ['@mastra/*'],
+  },
   plugins: [
     tsConfigPaths({
       projects: ['./tsconfig.json'],
@@ -28,6 +32,13 @@ export default defineConfig({
       colors: true,
       fileLog: {
         enabled: false, // Enable file logging to logs/frontend
+      },
+      networkLogs: {
+        enabled: true,
+        bodies: {
+          request: true,
+          response: true,
+        },
       },
     }),
   ],

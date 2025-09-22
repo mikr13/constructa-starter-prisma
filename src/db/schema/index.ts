@@ -1,3 +1,4 @@
-export * from "./_shared"
-export * from "./auth.schema"
-export * from "./profile.schema"
+export * from './_shared';
+export * from './file.schema';
+export * from './document.schema';
+export * from './auth.schema';

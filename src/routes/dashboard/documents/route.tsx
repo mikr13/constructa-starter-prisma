@@ -1,246 +1,365 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { FileText, Download, Trash2, Upload, Search, Eye, Filter } from 'lucide-react';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
-import { Badge } from '~/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '~/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select';
-import { useState } from 'react';
-import { } from '@tanstack/react-router';
+import { Label } from '~/components/ui/label';
+import { Switch } from '~/components/ui/switch';
+import * as FileUpload from '~/components/dropzone';
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { useServerFn } from '@tanstack/react-start';
+import { AudioLines, Book, FileText, Image as ImageIcon, Video } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
+import {
+  completeDocumentUpload,
+  directDocumentUpload,
+  initDocumentUpload,
+  listDocuments,
+  type CompleteDocumentUploadInput,
+  type DirectDocumentUploadInput,
+  type InitDocumentUploadInput,
+} from '~/server/function/documents.server';
 export const Route = createFileRoute('/dashboard/documents')({
-  component: RouteComponent,
+  loader: async () => {
+    const files = await listDocuments();
+    return { files };
+  },
+  component: DocumentsPage,
 });
 
-function RouteComponent() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState('all');
+function DocumentsPage() {
+  const router = useRouter();
+  const { files } = Route.useLoaderData() as {
+    files: Awaited<ReturnType<typeof listDocuments>>;
+  };
+  const [title, setTitle] = useState('');
+  const [text, setText] = useState('');
+  const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
+  const [search, setSearch] = useState('');
+  const [showUpload, setShowUpload] = useState(false);
+  const [showKB, setShowKB] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Mock data for documents
-  const documents = [
-    {
-      id: 1,
-      name: 'Business Plan 2024.pdf',
-      type: 'PDF',
-      size: '2.4 MB',
-      modified: '2024-01-15',
-      status: 'shared',
-    },
-    {
-      id: 2,
-      name: 'Financial Report Q4.xlsx',
-      type: 'Spreadsheet',
-      size: '1.2 MB',
-      modified: '2024-01-10',
-      status: 'private',
-    },
-    {
-      id: 3,
-      name: 'Project Proposal.docx',
-      type: 'Document',
-      size: '856 KB',
-      modified: '2024-01-08',
-      status: 'shared',
-    },
-    {
-      id: 4,
-      name: 'Marketing Analysis.pptx',
-      type: 'Presentation',
-      size: '5.7 MB',
-      modified: '2024-01-05',
-      status: 'private',
-    },
-    {
-      id: 5,
-      name: 'Contract Template.docx',
-      type: 'Document',
-      size: '234 KB',
-      modified: '2024-01-03',
-      status: 'shared',
-    },
-  ];
+  const initUploadFn = useServerFn(initDocumentUpload);
+  const completeUploadFn = useServerFn(completeDocumentUpload);
+  const directUploadFn = useServerFn(directDocumentUpload);
 
-  const filteredDocuments = documents.filter((doc) => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter =
-      filterType === 'all' || doc.type.toLowerCase() === filterType.toLowerCase();
-    return matchesSearch && matchesFilter;
+  const initUpload = useMutation({
+    mutationFn: (input: InitDocumentUploadInput) => initUploadFn({ data: input }),
+  });
+  const completeUpload = useMutation({
+    mutationFn: (input: CompleteDocumentUploadInput) => completeUploadFn({ data: input }),
+  });
+  const directUpload = useMutation({
+    mutationFn: (input: DirectDocumentUploadInput) => directUploadFn({ data: input }),
   });
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'PDF':
-        return 'bg-red-100 text-red-800';
-      case 'Spreadsheet':
-        return 'bg-green-100 text-green-800';
-      case 'Document':
-        return 'bg-blue-100 text-blue-800';
-      case 'Presentation':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+  const filtered = useMemo(() => {
+    const needle = search.trim().toLowerCase();
+    if (!needle) return files;
+    return files.filter((file) => {
+      const haystack = [file.name, file.mimeType, file.fileType].filter(Boolean) as string[];
+      return haystack.some((value) => value.toLowerCase().includes(needle));
+    });
+  }, [files, search]);
+
+  const formatFileSize = (size?: number | null) => {
+    if (!size || size <= 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const power = Math.min(Math.floor(Math.log(size) / Math.log(1024)), units.length - 1);
+    const value = size / 1024 ** power;
+    const decimals = value >= 10 || power === 0 ? 0 : 1;
+    return `${value.toFixed(decimals)} ${units[power]}`;
+  };
+
+  const uploading = initUpload.isPending || completeUpload.isPending || directUpload.isPending;
+
+  const handleUploadDoc = async () => {
+    if (filesToUpload.length === 0) return;
+    const file = filesToUpload[0];
+
+    try {
+      setErrorMessage(null);
+      // 1) request presigned URL and db draft row
+      const initResultRaw = await initUpload.mutateAsync({
+        originalName: file.name,
+        mimeType: file.type,
+        size: file.size,
+        title,
+        content: text,
+        addToKnowledgeBase: showKB,
+      });
+
+      const initResult = Array.isArray(initResultRaw)
+        ? (initResultRaw[0] as typeof initResultRaw[0]) ?? {}
+        : initResultRaw ?? {};
+
+      let { id, uploadUrl, key } = initResult as Record<string, unknown> as {
+        id?: string;
+        uploadUrl?: string | null;
+        key?: string;
+      };
+
+      if (!id) {
+        throw new Error('Upload initialization failed: missing file id');
+      }
+
+      let shouldComplete = true;
+
+      if (uploadUrl) {
+        // 2a) upload directly to S3 via presigned URL
+        await fetch(uploadUrl, {
+          method: 'PUT',
+          body: file,
+          headers: {
+            'Content-Type': file.type || 'application/octet-stream',
+          },
+        });
+      } else {
+        // 2b) fall back to server-side upload route
+        const arrayBuffer = await file.arrayBuffer();
+        const base64 = window.btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+        await directUpload.mutateAsync({
+          id,
+          key,
+          originalName: file.name,
+          size: file.size,
+          mimeType: file.type || undefined,
+          content: base64,
+        });
+        shouldComplete = false;
+      }
+
+      // 3) mark upload complete (send both id & key for robust server-side lookup)
+      if (shouldComplete) {
+        await completeUpload.mutateAsync({ id, key });
+      }
+
+      // refresh list
+      await router.invalidate();
+
+      // reset UI
+      setShowUpload(false);
+      setFilesToUpload([]);
+      setTitle('');
+      setText('');
+      setShowKB(false);
+    } catch (err) {
+      console.error('Upload failed', err);
+      setErrorMessage(err instanceof Error ? err.message : 'Upload failed');
     }
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="flex flex-col gap-6">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
-            <p className="text-muted-foreground">
-              Manage and organize your documents in one place.
-            </p>
-          </div>
-          <Button className="flex items-center gap-2">
-            <Upload className="h-4 w-4" />
-            Upload Document
-          </Button>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{documents.length}</div>
-              <p className="text-xs text-muted-foreground">+2 from last week</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Storage</CardTitle>
-              <Download className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">10.6 GB</div>
-              <p className="text-xs text-muted-foreground">80% of 13 GB used</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Shared Files</CardTitle>
-              <Eye className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">24</div>
-              <p className="text-xs text-muted-foreground">3 shared this week</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Recent Views</CardTitle>
-              <Eye className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">142</div>
-              <p className="text-xs text-muted-foreground">+12% from yesterday</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>All Documents</CardTitle>
-                <CardDescription>A list of all your uploaded documents</CardDescription>
-              </div>
-              <div className="flex gap-2">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    className="pl-8 w-64"
-                    placeholder="Search documents..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger className="w-40">
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Filter by type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="pdf">PDF</SelectItem>
-                    <SelectItem value="document">Document</SelectItem>
-                    <SelectItem value="spreadsheet">Spreadsheet</SelectItem>
-                    <SelectItem value="presentation">Presentation</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+    <>
+      {/* main layout */}
+      <div className="flex h-[calc(100vh-theme(spacing.16))]">
+        {/* left nav */}
+        <aside className="w-64 space-y-4 border-r px-4 py-6">
+          <h2 className="font-semibold text-lg">Files</h2>
+          <nav className="space-y-2 text-sm">
+            <NavItem label="All Files" />
+            <NavItem label="Documents" icon={FileText} />
+            <NavItem label="Images" icon={ImageIcon} />
+            <NavItem label="Audio" icon={AudioLines} />
+            <NavItem label="Videos" icon={Video} />
+            <div className="pt-4 font-medium text-muted-foreground text-xs uppercase">
+              Knowledge Base
             </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Size</TableHead>
-                  <TableHead>Modified</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredDocuments.map((doc) => (
-                  <TableRow key={doc.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        {doc.name}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className={getTypeColor(doc.type)}>
-                        {doc.type}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{doc.size}</TableCell>
-                    <TableCell>{doc.modified}</TableCell>
-                    <TableCell>
-                      <Badge variant={doc.status === 'shared' ? 'default' : 'secondary'}>
-                        {doc.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button size="icon" variant="ghost">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button size="icon" variant="ghost">
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button size="icon" variant="ghost">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+            <NavItem label="Twitter Marketing" icon={Book} indent />
+            <NavItem label="TailwindCSS" icon={Book} indent />
+            <NavItem label="Ant Design" icon={Book} indent />
+            <NavItem label="Python" icon={Book} indent />
+            <NavItem label="React" icon={Book} indent />
+            <NavItem label="Drizzle" icon={Book} indent />
+            <NavItem label="NextJS" icon={Book} indent />
+          </nav>
+        </aside>
+
+        {/* right pane */}
+        <main className="flex flex-1 flex-col overflow-hidden">
+          {/* toolbar */}
+          <div className="flex items-center justify-between gap-2 border-b px-6 py-4">
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search files"
+              className="max-w-xs"
+            />
+            <Button onClick={() => setShowUpload(true)}>Upload</Button>
+          </div>
+
+          {/* header row */}
+          <div className="flex items-center justify-between px-6 py-3">
+            <h3 className="font-medium text-sm">
+              All Files
+              {filtered && (
+                <span className="ml-2 text-muted-foreground">• Total {filtered.length}</span>
+              )}
+            </h3>
+            <div className="flex items-center gap-2">
+              <Switch checked={showKB} onCheckedChange={setShowKB} />
+              <span className="text-muted-foreground text-xs">Show content in Knowledge Base</span>
+            </div>
+          </div>
+
+          {/* file table */}
+          <div className="flex-1 overflow-auto px-2">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-background">
+                <tr className="border-b text-muted-foreground">
+                  <th className="py-2 text-left font-normal">File</th>
+                  <th className="py-2 text-left font-normal">Created At</th>
+                  <th className="py-2 text-left font-normal">Size</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered && filtered.length > 0 ? (
+                  filtered.map((d) => (
+                    <tr
+                      key={d.id}
+                      className="border-b transition-colors last:border-b-0 hover:bg-muted/50"
+                    >
+                      <td className="py-3">
+                        <div className="flex items-center gap-2">
+                          <FileText className="size-4 text-muted-foreground" />
+                          <span>{d.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 text-muted-foreground">
+                        {d.createdAt ? new Date(d.createdAt).toLocaleString() : '--'}
+                      </td>
+                      <td className="py-3 text-muted-foreground">{formatFileSize(d.size)}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="py-4 text-center">
+                      No documents found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </main>
       </div>
+
+      {/* upload dialog */}
+      <Dialog
+        open={showUpload}
+        onOpenChange={(nextOpen) => {
+          setShowUpload(nextOpen);
+          if (!nextOpen) {
+            setErrorMessage(null);
+            setFilesToUpload([]);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Upload document</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="title-input">Title</Label>
+              <Input
+                id="title-input"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="text-input">Document Text</Label>
+              <textarea
+                id="text-input"
+                className="h-40 w-full rounded-md border p-2 text-sm"
+                placeholder="Paste text here…"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Attach files</Label>
+              <FileUpload.Root
+                value={filesToUpload}
+                onValueChange={(updatedFiles: File[] | null) => {
+                  setFilesToUpload(updatedFiles || []);
+                }}
+              >
+                <FileUpload.Dropzone className="mt-1" />
+                <FileUpload.Trigger className="mt-2 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                  Select Files
+                </FileUpload.Trigger>
+                {filesToUpload.length > 0 && (
+                  <FileUpload.List className="mt-2">
+                    {filesToUpload.map((file, i) => (
+                      <FileUpload.Item key={file.name + i} value={file}>
+                        <FileUpload.ItemPreview />
+                        <FileUpload.ItemMetadata />
+                        <FileUpload.ItemDelete />
+                      </FileUpload.Item>
+                    ))}
+                  </FileUpload.List>
+                )}
+                {filesToUpload.length > 0 && (
+                  <FileUpload.Clear className="mt-2 inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50">
+                    Clear All
+                  </FileUpload.Clear>
+                )}
+              </FileUpload.Root>
+            </div>
+          </div>
+
+          {(errorMessage ||
+            initUpload.isError ||
+            completeUpload.isError ||
+            directUpload.isError) && (
+            <p className="text-red-600 text-sm">
+              {errorMessage ||
+                initUpload.error?.message ||
+                completeUpload.error?.message ||
+                directUpload.error?.message ||
+                'An unknown error occurred during upload.'}
+            </p>
+          )}
+
+          <DialogFooter>
+            <Button onClick={handleUploadDoc} disabled={uploading || filesToUpload.length === 0}>
+              {uploading ? 'Uploading…' : 'Upload'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function NavItem({
+  label,
+  icon: Icon,
+  indent = false,
+}: {
+  label: string;
+  icon?: React.ElementType;
+  indent?: boolean;
+}) {
+  return (
+    <div
+      className={`flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-foreground/80 hover:bg-muted hover:text-foreground ${
+        indent ? 'pl-6' : ''
+      }`}
+    >
+      {Icon && <Icon className="size-4" />}
+      <span className="text-sm">{label}</span>
     </div>
   );
 }
