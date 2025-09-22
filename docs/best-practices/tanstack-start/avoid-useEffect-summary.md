@@ -1,7 +1,4 @@
----
-globs: *.tsx,*.ts
-alwaysApply: false
----
+
 Don’t fetch or derive app state in useEffect.
 
 1. Fetch on navigation via TanStack Router loaders (SSR + streaming). Optionally seed TanStack Query in the loader with queryClient.ensureQueryData. \[1]
