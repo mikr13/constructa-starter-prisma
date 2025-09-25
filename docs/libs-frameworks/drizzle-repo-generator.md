@@ -1,78 +1,113 @@
-# Installation
-```
-pnpm add drizzle-repository-generator
-```
-# How to use
-## basic
-```ts
-import { Repository } from 'drizzle-repository-generator'
-const repo = Repository(db, user);
-// find
-await repo.find({ id }).returnFirst();
-// insert
-await repo.insert(data);
-// upsert
-await repo.insert(data, { onConflict: 'update' });
-// update
-await repo.update(data).where({ id: 1 });
-// delete
-await repo.delete(where);
-```
-## complex query
-### Finding
-```ts
-const repo = Repository(db, user, { local });
-await repo.with('local').find({ id }).returnFirst();
-await repo.with('local').find(['id', '=', 2]).returnFirst();
-await repo.with('local').find(eq(/** ... */)).returnFirst();
-await repo.with('local').find([
-    ['name', 'like', '%john%'],
-    ['age', '>', 20],
-    // ...
-]).returnMany();
+# Prisma Repository Pattern
 
-// orderBy
-await repo.with('local').find({ id }).returnMany({
-    offset: 0,
-    limit: 100,
-    
-    orderBy: ['id', 'desc'],
-    // or
-    orderBy: [
-        ['id', 'desc'],
-        ['name', 'asc'],
-    ],
-    // or
-    orderBy: [asc(...)]
+This project uses custom repository classes with Prisma for clean data access patterns.
+
+## Basic Repository Operations
+
+```ts
+import { userRepo } from '~/db/repositories/user.repo';
+
+// Find by ID
+const user = await userRepo.findById(id);
+
+// Create new record
+const newUser = await userRepo.create(data);
+
+// Update record
+const updatedUser = await userRepo.update(id, data);
+
+// Delete record
+await userRepo.delete(id);
+```
+
+## Advanced Queries
+
+### Finding with Complex Conditions
+
+```ts
+// Find with includes (relations)
+const user = await userRepo.findById(id, {
+  include: { profile: true, documents: true }
+});
+
+// Find by email
+const user = await userRepo.findByEmail(email);
+
+// Find many with conditions
+const users = await userRepo.findMany({
+  where: {
+    emailVerified: true,
+    createdAt: {
+      gte: new Date('2024-01-01')
+    }
+  },
+  include: { profile: true },
+  orderBy: { createdAt: 'desc' },
+  take: 10,
+  skip: 0
+});
+
+// Count records
+const count = await userRepo.count({
+  where: { emailVerified: true }
 });
 ```
-### Mutations
+
+### Document Repository with Vector Search
+
 ```ts
-// update
-await repo.update(data).where({
-    id: 1,
-    name: 'john',
+import { documentChunkRepo } from '~/db/repositories/document.repo';
+
+// Vector similarity search
+const similarChunks = await documentChunkRepo.findSimilar(
+  queryVector, 
+  limit: 5, 
+  threshold: 0.5
+);
+
+// Find chunks by file
+const chunks = await documentChunkRepo.findByFileId(fileId);
+```
+
+### File Repository Operations
+
+```ts
+import { fileRepo } from '~/db/repositories/file.repo';
+
+// Find by key
+const file = await fileRepo.findByKey(key);
+
+// Find by client
+const files = await fileRepo.findByClientId(clientId);
+```
+
+## Transactions
+
+```ts
+import { db } from '~/db/client';
+
+await db.$transaction(async (tx) => {
+  const user = await tx.user.create({ data: userData });
+  const profile = await tx.profile.create({ 
+    data: { ...profileData, userId: user.id } 
+  });
+  return { user, profile };
 });
-// delete
-await repo.delete([
-    'id', '=', 1,
-    'name', '=', 'john',
-]);
-```
-## Transaction
-```ts
-await db.transaction((tx) => {
-    const userRepo = Repository(tx, user);
-    const sessionRepo = Repository(tx, session);
-    await userRepo.insert(user);
-    await sessionRepo.insert(session);
-})
 ```
 
-# compatible
-- **postgres** implemented only
-- **sqlite** considering
+## Repository Pattern Benefits
 
-# Warn
-- primary key have to fixed to be `id` yet. cause every table mapped by this.
-- tests are not enough. please open issue whenever finding bugs for appreciate.
+- **Type Safety**: Full TypeScript support with Prisma's generated types
+- **Clean API**: Simple, consistent interface across all repositories
+- **Relations**: Easy handling of related data with `include`
+- **Transactions**: Built-in transaction support
+- **Vector Search**: Specialized methods for vector operations
+- **Flexibility**: Direct access to Prisma's powerful query capabilities
+
+## Available Repositories
+
+- `userRepo` - User management
+- `profileRepo` - User profiles
+- `fileRepo` - File storage
+- `documentRepo` - Document management
+- `documentChunkRepo` - Document chunks with vector search

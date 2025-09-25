@@ -1,11 +1,11 @@
+import * as p from '@clack/prompts';
+import { blue, cyan, green, red, yellow } from 'ansis';
+import { defineCommand, runMain } from 'citty';
 import dotenv from 'dotenv';
 import 'dotenv/config';
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { basename } from 'node:path';
-import * as p from '@clack/prompts';
-import { blue, cyan, green, red, yellow } from 'ansis';
-import { defineCommand, runMain } from 'citty';
 dotenv.config();
 // Helper function to run commands and log output
 const runCommand = (command: string, description: string) => {
@@ -57,8 +57,8 @@ const initCommand = defineCommand({
     checkDocker();
     console.log(yellow('ℹ️ Starting Docker containers. This might take a while...'));
     runCommand('docker compose up -d', 'Start Docker containers');
-    runCommand('npx drizzle-kit generate', 'Generate Drizzle kit');
-    runCommand('npx drizzle-kit migrate', 'Run Drizzle migrations');
+    runCommand('npx prisma generate', 'Generate Prisma kit');
+    runCommand('npx prisma migrate', 'Run Prisma migrations');
 
     // Check if auth schema already exists
     const authSchemaPath = 'src/server/db/auth.schema.ts';

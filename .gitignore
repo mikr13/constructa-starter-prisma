@@ -33,6 +33,7 @@ yarn.lock
 dev_docs
 src/routeTree.gen.ts
 logs
+src/db/generated
 
 # START Ruler Generated Files
 /.codex/config.toml

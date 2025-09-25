@@ -1,29 +1,29 @@
-import { Button } from '~/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
-import { Switch } from '~/components/ui/switch';
-import * as FileUpload from '~/components/dropzone';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
 import { AudioLines, Book, FileText, Image as ImageIcon, Video } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import * as FileUpload from '~/components/dropzone';
+import { Button } from '~/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Switch } from '~/components/ui/switch';
 
 import {
-  completeDocumentUpload,
-  directDocumentUpload,
-  initDocumentUpload,
-  listDocuments,
-  type CompleteDocumentUploadInput,
-  type DirectDocumentUploadInput,
-  type InitDocumentUploadInput,
+    completeDocumentUpload,
+    directDocumentUpload,
+    initDocumentUpload,
+    listDocuments,
+    type CompleteDocumentUploadInput,
+    type DirectDocumentUploadInput,
+    type InitDocumentUploadInput,
 } from '~/server/function/documents.server';
 export const Route = createFileRoute('/dashboard/documents')({
   loader: async () => {
@@ -177,7 +177,7 @@ function DocumentsPage() {
             <NavItem label="Ant Design" icon={Book} indent />
             <NavItem label="Python" icon={Book} indent />
             <NavItem label="React" icon={Book} indent />
-            <NavItem label="Drizzle" icon={Book} indent />
+            <NavItem label="Prisma" icon={Book} indent />
             <NavItem label="NextJS" icon={Book} indent />
           </nav>
         </aside>

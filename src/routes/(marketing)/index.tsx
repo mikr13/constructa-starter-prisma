@@ -1,30 +1,25 @@
-import {} from '@tanstack/react-router';
-import { Link, createFileRoute } from '@tanstack/react-router';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
+import { createFileRoute } from '@tanstack/react-router';
 import {
-  Code2,
-  Zap,
-  Shield,
-  Clock,
-  Rocket,
-  Sparkles,
-  CheckCircle2,
-  ArrowRight,
-  Terminal,
-  Database,
-  Palette,
-  Users,
-  BarChart3,
-  FileText,
-  Image,
-  MessageSquare,
-  GitBranch,
-  Settings,
-  Package,
+    ArrowRight,
+    BarChart3,
+    CheckCircle2,
+    Code2,
+    Database,
+    GitBranch,
+    MessageSquare,
+    Palette,
+    Rocket,
+    Settings,
+    Shield,
+    Sparkles,
+    Terminal,
+    Users,
+    Zap
 } from 'lucide-react';
 import GradientOrb from '~/components/gradient-orb';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 
 export const Route = createFileRoute('/(marketing)/')({
   component: RouteComponent,
@@ -268,7 +263,7 @@ function RouteComponent() {
               <Database className="mb-2 h-8 w-8 text-primary" />
               <CardTitle>Database Ready</CardTitle>
               <CardDescription>
-                PostgreSQL with Docker, Drizzle ORM, migrations, and Supabase compatibility
+                PostgreSQL with Docker, Prisma ORM, migrations, and Supabase compatibility
               </CardDescription>
             </CardHeader>
           </Card>

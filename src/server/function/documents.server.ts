@@ -1,16 +1,13 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getWebRequest } from '@tanstack/react-start/server';
-import { randomUUID } from 'node:crypto';
 import { Buffer } from 'node:buffer';
+import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 
 import { fileEnv } from '~/conf/file';
-import { db } from '~/db/db-config';
-import { files } from '~/db/schema/file.schema';
-import { documents } from '~/db/schema/document.schema';
+import { db } from '~/db/client';
 import { auth } from '~/server/auth.server';
 import { S3StaticFileImpl } from '~/server/s3/s3';
-import { and, desc, eq } from 'drizzle-orm';
 
 const fileService = new S3StaticFileImpl();
 
@@ -111,11 +108,10 @@ const normalizeInput = <TSchema extends z.ZodTypeAny>(
 export const listDocuments = createServerFn({ method: 'GET' }).handler(async () => {
   const user = await requireUser();
 
-  const fileRows = await db
-    .select()
-    .from(files)
-    .where(eq(files.clientId, user.id))
-    .orderBy(desc(files.createdAt));
+  const fileRows = await db.file.findMany({
+    where: { clientId: user.id },
+    orderBy: { createdAt: 'desc' }
+  });
 
   return Promise.all(
     fileRows.map(async (file) => ({
@@ -127,7 +123,8 @@ export const listDocuments = createServerFn({ method: 'GET' }).handler(async () 
 
 export const initDocumentUpload = createServerFn({ method: 'POST' })
   .validator((input) => normalizeInput(input, initUploadSchema))
-  .handler(async (input) => {
+  .handler(async (ctx) => {
+    const input = ctx.data as InitDocumentUploadInput;
     const user = await requireUser();
 
     const originalName = input.originalName?.trim() || `file-${Date.now()}`;
@@ -138,10 +135,9 @@ export const initDocumentUpload = createServerFn({ method: 'POST' })
     const shouldCreateDocument =
       !!input.addToKnowledgeBase || Boolean(input.content?.trim().length);
 
-    const fileRecord = await db.transaction(async (tx) => {
-      const [createdFile] = await tx
-        .insert(files)
-        .values({
+    const fileRecord = await db.$transaction(async (tx) => {
+      const createdFile = await tx.file.create({
+        data: {
           key,
           clientId: user.id,
           fileType: mimeType,
@@ -149,26 +145,28 @@ export const initDocumentUpload = createServerFn({ method: 'POST' })
           size,
           url: '',
           mimeType: input.mimeType ?? null,
-        })
-        .returning();
+        }
+      });
 
       if (!createdFile) {
         throw new Error('Failed to create file record');
       }
 
       if (shouldCreateDocument) {
-        await tx.insert(documents).values({
-          title: input.title?.trim() || originalName,
-          content: input.content ?? '',
-          fileType: mimeType,
-          filename: originalName,
-          totalCharCount: input.content?.length ?? null,
-          totalLineCount: input.content ? input.content.split(/\r?\n/).length : null,
-          sourceType: input.addToKnowledgeBase ? 'knowledge-base' : 'upload',
-          source: key,
-          fileId: createdFile.id,
-          userId: user.id,
-          clientId: user.id,
+        await tx.document.create({
+          data: {
+            title: input.title?.trim() || originalName,
+            content: input.content ?? '',
+            fileType: mimeType,
+            filename: originalName,
+            totalCharCount: input.content?.length ?? null,
+            totalLineCount: input.content ? input.content.split(/\r?\n/).length : null,
+            sourceType: input.addToKnowledgeBase ? 'knowledge-base' : 'upload',
+            source: key,
+            fileId: createdFile.id,
+            userId: user.id,
+            clientId: user.id,
+          }
         });
       }
 
@@ -184,10 +182,8 @@ export const initDocumentUpload = createServerFn({ method: 'POST' })
 
 export const completeDocumentUpload = createServerFn({ method: 'POST' })
   .validator((input) => normalizeInput(input, completeUploadSchema))
-  .handler(async (payload) => {
-    const data = (payload && typeof payload === 'object' && 'data' in (payload as Record<string, unknown>))
-      ? ((payload as Record<string, unknown>).data as CompleteDocumentUploadInput)
-      : (payload as CompleteDocumentUploadInput);
+  .handler(async (ctx) => {
+    const data = ctx.data as CompleteDocumentUploadInput;
 
     const { id, key } = data;
 
@@ -196,21 +192,18 @@ export const completeDocumentUpload = createServerFn({ method: 'POST' })
     let file = null;
 
     if (key) {
-      const byKey = await db
-        .select()
-        .from(files)
-        .where(and(eq(files.key, key), eq(files.clientId, user.id)))
-        .limit(1);
-      file = byKey[0] ?? null;
+      file = await db.file.findFirst({
+        where: { 
+          key: key,
+          clientId: user.id 
+        }
+      });
     }
 
     if (!file && id) {
-      const byId = await db
-        .select()
-        .from(files)
-        .where(eq(files.id, id))
-        .limit(1);
-      const candidate = byId[0];
+      const candidate = await db.file.findUnique({
+        where: { id: id }
+      });
       if (candidate && candidate.clientId === user.id) {
         file = candidate;
       }
@@ -223,24 +216,22 @@ export const completeDocumentUpload = createServerFn({ method: 'POST' })
     const url = await fileService.getFullFileUrl(file.key);
     const now = new Date();
 
-    await db
-      .update(files)
-      .set({
+    await db.file.update({
+      where: { key: file.key },
+      data: {
         url,
         updatedAt: now,
         accessedAt: now,
-      })
-      .where(eq(files.key, file.key));
+      }
+    });
 
     return { id: file.id, url };
   });
 
 export const directDocumentUpload = createServerFn({ method: 'POST' })
   .validator((input) => normalizeInput(input, directUploadSchema))
-  .handler(async (payload) => {
-    const data = (payload && typeof payload === 'object' && 'data' in (payload as Record<string, unknown>))
-      ? ((payload as Record<string, unknown>).data as DirectDocumentUploadInput)
-      : (payload as DirectDocumentUploadInput);
+  .handler(async (ctx) => {
+    const data = ctx.data as DirectDocumentUploadInput;
 
     const { id, key: inputKey, originalName, size, content, mimeType } = data;
 
@@ -253,31 +244,31 @@ export const directDocumentUpload = createServerFn({ method: 'POST' })
       throw new Error('Missing upload content');
     }
 
-    const byId = id
-      ? await db
-          .select()
-          .from(files)
-          .where(and(eq(files.id, id), eq(files.clientId, user.id)))
-          .limit(1)
-      : [];
+    let fileRecord = null;
 
-    let fileRecord = byId[0] ?? null;
+    if (id) {
+      fileRecord = await db.file.findFirst({
+        where: { 
+          id: id,
+          clientId: user.id 
+        }
+      });
+    }
 
     if (!fileRecord && inputKey) {
-      const byKey = await db
-        .select()
-        .from(files)
-        .where(and(eq(files.key, inputKey), eq(files.clientId, user.id)))
-        .limit(1);
-      fileRecord = byKey[0] ?? null;
+      fileRecord = await db.file.findFirst({
+        where: { 
+          key: inputKey,
+          clientId: user.id 
+        }
+      });
     }
 
     let resolvedKey = fileRecord?.key ?? inputKey ?? buildObjectKey(user.id, inferredName);
 
     if (!fileRecord) {
-      const [created] = await db
-        .insert(files)
-        .values({
+      const created = await db.file.create({
+        data: {
           ...(id ? { id } : {}),
           key: resolvedKey,
           clientId: user.id,
@@ -286,8 +277,8 @@ export const directDocumentUpload = createServerFn({ method: 'POST' })
           size: inferredSize,
           url: '',
           mimeType: mimeType ?? null,
-        })
-        .returning();
+        }
+      });
 
       if (!created) {
         throw new Error('Failed to create file record for upload');
@@ -307,9 +298,9 @@ export const directDocumentUpload = createServerFn({ method: 'POST' })
     const url = await fileService.getFullFileUrl(resolvedKey);
     const now = new Date();
 
-    await db
-      .update(files)
-      .set({
+    await db.file.update({
+      where: { id: fileRecord.id },
+      data: {
         url,
         fileType: mimeType ?? fileRecord.fileType,
         mimeType: mimeType ?? fileRecord.mimeType,
@@ -317,8 +308,8 @@ export const directDocumentUpload = createServerFn({ method: 'POST' })
         size: inferredSize,
         updatedAt: now,
         accessedAt: now,
-      })
-      .where(eq(files.id, fileRecord.id));
+      }
+    });
 
     return { id: fileRecord.id, url };
   });

@@ -31,7 +31,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
     ports:
-      - '9000:9000' # S3 API (use this in your app)
+      - '9002:9000' # S3 API (use this in your app)
       - '9001:9001' # Web UI
     volumes:
       - ex0-minio-data:/data

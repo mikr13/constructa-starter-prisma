@@ -11,22 +11,21 @@
 
 > ⚠️ **Work in Progress** - This starter kit is currently under active development. Features and documentation may change frequently.
 
-
 ## ✨ Features
 
 - 🔐 **Authentication** - Login/signup with email, GitHub & Google OAuth, password reset
 - 📊 **Dashboard Templates** - AI Chat, Workflows, Documents, Image Chat, Charts (`/dashboard`)
 - 🎨 **Marketing Pages** - Modern landing page with responsive design & dark/light mode
-- 💾 **Database** - Local PostgreSQL with Docker, Supabase ready, Drizzle ORM
+- 💾 **Database** - Local PostgreSQL with Docker, Supabase ready, Prisma ORM
 - 🤖 **AI-Optimized** - Cursor rules, .ruler auto-generated agent rules, AGENTS.md format for Claude Code/Codex/Cursor, consistent patterns, TypeScript for better AI coding
 - 🛠️ **Developer Tools** - Hot reload, path aliases, Oxlint, Vitest, custom CLI
 - 🐛 **Frontend Error Logging** - Browser-Echo integration for automatic error capture and structured logging
 
-
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Download & Install **[Node.js](https://nodejs.org/en)** 18+ 
+
+- Download & Install **[Node.js](https://nodejs.org/en)** 18+
 - Download & Install **[Docker](https://www.docker.com/)** Desktop
 - **pnpm** (recommended package manager)
 
@@ -60,7 +59,6 @@ Why start with a boilerplate when AI can generate almost an entire app for us? B
 
 On top of that, we can layer in helpful tooling such as AI rules (Cursor Rules, Agents.md, and more) and configuration settings that make it easier for Cursor, Claude, and similar tools to build your app. That’s the whole idea behind this project. It’s still in an early stage and not production-ready, but it’s already mature enough to create some cool things.
 
-
 ## Tech Stack
 
 - **[TanStack Start](https://tanstack.com/start)** - Modern full-stack React framework
@@ -70,18 +68,16 @@ On top of that, we can layer in helpful tooling such as AI rules (Cursor Rules, 
 - **[TanStack Router](https://tanstack.com/router)** - Type-safe file-based routing
 - **[Better Auth](https://better-auth.com/)** - Modern authentication library
 - **[Better Auth UI](https://github.com/daveyplate/better-auth-ui)** - Pre-built React components for Better Auth
-- **[Drizzle ORM](https://orm.drizzle.team/)** - TypeScript ORM for PostgreSQL
+- **[Prisma ORM](https://www.prisma.io/docs/orm)** - TypeScript ORM for PostgreSQL
 - **[Oxlint](https://oxc.rs/docs/guide/usage/linter.html)** - Fast JavaScript/TypeScript linter
 - **[Vitest](https://vitest.dev/)** - Lightning fast unit testing framework
 - **Cursor Rules** - Pre-configured AI coding assistant rules for optimal development experience
 - **.ruler** - Auto-generates agent rules for consistent AI-assisted development
 - **AGENTS.md** - Standardized agent rules format compatible with Claude Code, Codex, Cursor, and other AI coding assistants
 
-
 ### Project CLI (`pnpm ex0`)
 
 This project includes a custom CLI tool for common tasks. Run it using `pnpm ex0 <command>`.
-
 
 | Command    | Description                                                                | Args                 |
 | :--------- | :------------------------------------------------------------------------- | :------------------- |
@@ -152,7 +148,7 @@ The application supports **multiple email providers** for maximum flexibility. Y
 
 2. **Mailhog** (Recommended for local development)
    - Catches all emails locally
-   - Web UI to view emails at http://localhost:8025
+   - Web UI to view emails at <http://localhost:8025>
    - Already included in Docker Compose
 
    ```bash
@@ -161,11 +157,13 @@ The application supports **multiple email providers** for maximum flexibility. Y
    ```
 
    Start Mailhog with Docker:
+
    ```bash
    docker-compose up -d mailhog
    ```
 
 3. **SMTP Provider** (For production or custom email servers)
+
    ```bash
    EMAIL_PROVIDER="smtp"
    SMTP_HOST="smtp.gmail.com"
@@ -176,6 +174,7 @@ The application supports **multiple email providers** for maximum flexibility. Y
    ```
 
 4. **Resend** (Modern email API)
+
    ```bash
    EMAIL_PROVIDER="resend"
    RESEND_API_KEY="re_xxxxxxxxxxxx"
@@ -201,6 +200,7 @@ VITE_ENABLE_EMAIL_VERIFICATION="true"
 The email system is designed to be extensible. To add a new provider:
 
 1. **Create a new provider class** in `src/server/email/providers.ts`:
+
    ```typescript
    export class MyCustomProvider implements EmailProvider {
      async sendEmail({ from, to, subject, html }) {
@@ -210,6 +210,7 @@ The email system is designed to be extensible. To add a new provider:
    ```
 
 2. **Add the provider to the factory** in `src/server/email/index.ts`:
+
    ```typescript
    case "custom":
      emailProvider = new MyCustomProvider();
@@ -217,6 +218,7 @@ The email system is designed to be extensible. To add a new provider:
    ```
 
 3. **Update your environment variables**:
+
    ```bash
    EMAIL_PROVIDER="custom"
    # Add any custom configuration needed
@@ -225,11 +227,13 @@ The email system is designed to be extensible. To add a new provider:
 #### Email Verification Behavior
 
 **When disabled** (default):
+
 - Users are automatically signed in after registration
 - No verification email is sent
 - Users are redirected directly to the dashboard
 
 **When enabled**:
+
 - Users must verify their email before signing in
 - A verification email is sent upon registration
 - Users are redirected to a "check your email" page
@@ -254,6 +258,7 @@ The application supports OAuth authentication with GitHub and Google. Here's how
    - Generate a new **Client Secret**
 
 3. **Add to environment variables:**
+
    ```bash
    # Server-side configuration
    GITHUB_CLIENT_ID="your-github-client-id"
@@ -288,6 +293,7 @@ The application supports OAuth authentication with GitHub and Google. Here's how
    - Copy the **Client ID** and **Client Secret**
 
 5. **Add to environment variables:**
+
    ```bash
    # Server-side configuration
    GOOGLE_CLIENT_ID="your-google-client-id"
@@ -305,7 +311,6 @@ The application supports OAuth authentication with GitHub and Google. Here's how
 
 Once configured, users will see GitHub and Google sign-in options on the authentication pages. The OAuth providers are conditionally enabled based on the presence of their respective environment variables.
 
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -320,11 +325,12 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 - Bluesky: [@kevinkern.dev](https://bsky.app/profile/kevinkern.dev)
 
 ## AI Academy & Courses
+
 - Learn Cursor AI: [Ultimate Cursor Course](https://www.instructa.ai/en/cursor-ai)
 - Learn to build software with AI: [instructa.ai](https://www.instructa.ai)
 
-## See my other projects:
+## See my other projects
 
-* [AI Prompts](https://github.com/instructa/ai-prompts/blob/main/README.md) - Curated AI Prompts for Cursor AI, Cline, Windsurf and Github Copilot
-* [codefetch](https://github.com/regenrek/codefetch) - Turn code into Markdown for LLMs with one simple terminal command
-* [aidex](https://github.com/regenrek/aidex) A CLI tool that provides detailed information about AI language models, helping developers choose the right model for their needs.# tool-starter
+- [AI Prompts](https://github.com/instructa/ai-prompts/blob/main/README.md) - Curated AI Prompts for Cursor AI, Cline, Windsurf and Github Copilot
+- [codefetch](https://github.com/regenrek/codefetch) - Turn code into Markdown for LLMs with one simple terminal command
+- [aidex](https://github.com/regenrek/aidex) A CLI tool that provides detailed information about AI language models, helping developers choose the right model for their needs.# tool-starter

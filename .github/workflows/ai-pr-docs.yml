@@ -83,7 +83,7 @@ jobs:
 
           ## What changed
           - Group by area (API, UI, DB, Build, Docs, Tests).
-          - For DB (Drizzle/Postgres): new tables/columns, indexes, constraints, migrations, backfills; risks.
+          - For DB (Prisma/Postgres): new tables/columns, indexes, constraints, migrations, backfills; risks.
           - For TanStack Query: invalidation strategy, query keys, caching details.
           - For Types: breaking signatures, generics, union exhaustiveness, `never/unknown`.
 
@@ -107,7 +107,7 @@ jobs:
           Focus (in order):
           1) Correctness & safety (null/undefined, async/races, error handling)
           2) TanStack Query hygiene (stable queryKeys, staleTime, enabled, cache invalidation)
-          3) Drizzle/Postgres (schema, idempotent migrations, indexes/constraints, SQL safety)
+          3) Prisma/Postgres (schema, idempotent migrations, indexes/constraints, SQL safety)
           4) Types & API boundaries (DTO validation, unions exhaustive, `never/unknown`)
           5) Performance & DX (N+1, pagination, SSR/ISR, bundle impact, readability)
 

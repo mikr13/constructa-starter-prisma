@@ -1,6 +1,4 @@
-import { inArray } from 'drizzle-orm';
-import { db } from './db-config';
-import { profile, user } from './schema';
+import { db } from './client';
 
 /**
  * Small, disposable test dataset
@@ -94,32 +92,29 @@ const demoFiles = [
 ] as const;
 
 export async function createAllTestData() {
-  await db.transaction(async (tx) => {
-    await tx.insert(user).values(demoUsers);
-    await tx.insert(profile).values(demoProfiles);
-    await tx.insert(files).values(demoFiles);
+  await db.$transaction(async (tx) => {
+    await tx.user.createMany({ data: demoUsers });
+    await tx.profile.createMany({ data: demoProfiles });
+    await tx.file.createMany({ data: demoFiles });
   });
 }
 
 export async function deleteAllTestData() {
-  await db.transaction(async (tx) => {
-    await tx.delete(files).where(
-      inArray(
-        files.id,
-        demoFiles.map((f) => f.id)
-      )
-    );
-    await tx.delete(profile).where(
-      inArray(
-        profile.id,
-        demoProfiles.map((p) => p.id)
-      )
-    );
-    await tx.delete(user).where(
-      inArray(
-        user.id,
-        demoUsers.map((u) => u.id)
-      )
-    );
+  await db.$transaction(async (tx) => {
+    await tx.file.deleteMany({
+      where: {
+        id: { in: demoFiles.map((f) => f.id) }
+      }
+    });
+    await tx.profile.deleteMany({
+      where: {
+        id: { in: demoProfiles.map((p) => p.id) }
+      }
+    });
+    await tx.user.deleteMany({
+      where: {
+        id: { in: demoUsers.map((u) => u.id) }
+      }
+    });
   });
 }
